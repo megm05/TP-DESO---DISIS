@@ -1,0 +1,19 @@
+package com.grupo12.persistencia;
+
+import com.grupo12.dominio.Parametro;
+
+/** Implementación JDBC (PostgreSQL) de {@link ParametroDAO}. */
+public class ParametroDAOImpl extends DAOBase implements ParametroDAO {
+
+    @Override
+    public Parametro obtener_por_clave(String clave) {
+        return consultarUno("SELECT clave, valor, descripcion FROM Parametro WHERE clave = ?",
+                rs -> {
+                    Parametro parametro = new Parametro();
+                    parametro.setClave(rs.getString("clave"));
+                    parametro.setValor(rs.getString("valor"));
+                    parametro.setDescripcion(rs.getString("descripcion"));
+                    return parametro;
+                }, clave);
+    }
+}
