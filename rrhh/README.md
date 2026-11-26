@@ -5,8 +5,8 @@ Java 17 + PostgreSQL (JDBC), proyecto Maven.
 
 ## Estado
 
-En desarrollo. Están el modelo de dominio completo y la capa de persistencia; faltan los
-gestores de los casos de uso y las pantallas.
+En desarrollo. Están el modelo de dominio completo, la capa de persistencia y 
+gestores de los casos de uso; faltan las pantallas.
 
 ```
 src/main/java/com/grupo12/
