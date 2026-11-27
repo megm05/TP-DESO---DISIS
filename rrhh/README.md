@@ -4,6 +4,7 @@ Sistema para la consultora **Capit@l Humano**: gestión de preguntas, evaluació
 candidatos, cuestionarios por bloques y orden de mérito.
 UTN FRSF — Diseño de Sistemas de Información — Entrega final (etapas 7 y 8).
 
+
 ## Casos de uso implementados
 
 | CU | Nombre |
@@ -19,7 +20,7 @@ UTN FRSF — Diseño de Sistemas de Información — Entrega final (etapas 7 y 8
 
 ## Interfaz según los wireframes
 
-Esta versión adapta las pantallas a los wireframes que el grupo presentó en la primera
+Esta versión adapta las pantallas a los wireframes que se presentaron en la primera
 parte del trabajo: ventana con el título centrado, recuadros de filtros, Cancelar a la
 izquierda y Aceptar a la derecha, mensajes en ventanas emergentes con ícono, marcas de
 error junto a cada campo, lápiz y paginación en la grilla de preguntas y barra de pasos.
