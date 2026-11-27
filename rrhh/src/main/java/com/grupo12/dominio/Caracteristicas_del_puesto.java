@@ -1,8 +1,8 @@
 package com.grupo12.dominio;
 
 /**
- * Clase asociación entre {@link Puesto} y {@link Competencia}: ponderación mínima
- * que debe obtener un candidato en la competencia para ajustarse al puesto.
+ * Clase asociación entre Puesto y Competencia: ponderación mínima que debe obtener un candidato en la
+ * competencia para ajustarse al puesto.
  */
 public class Caracteristicas_del_puesto {
 
@@ -17,7 +17,6 @@ public class Caracteristicas_del_puesto {
         this.ponderacion = ponderacion;
     }
 
-    /** Indica si el puntaje obtenido alcanza la ponderación requerida. */
     public boolean cumple_ponderacion(double puntaje) {
         return puntaje >= ponderacion;
     }

@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Señala que los datos ingresados por el actor no superan las validaciones de un
- * caso de uso. Lleva TODOS los mensajes a mostrar (los flujos alternativos piden
- * detallar todas las omisiones en las que se ha incurrido).
- */
+/** Señala que los datos ingresados por el actor no superan las validaciones de un caso de uso. */
 public class ValidacionException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
@@ -24,10 +20,6 @@ public class ValidacionException extends RuntimeException {
         this(errores, null);
     }
 
-    /**
-     * @param errores mensajes a mostrar
-     * @param campo   campo que debe recibir el foco al volver a la pantalla (puede ser null)
-     */
     public ValidacionException(List<String> errores, String campo) {
         super(String.join(" ", errores));
         this.errores = new ArrayList<>(errores);

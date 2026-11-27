@@ -1,9 +1,6 @@
 package com.grupo12.dto;
 
-/**
- * Fila de la lista de puestos del orden de mérito (CU028 paso 4). Incluye valores
- * calculados: cantidad de candidatos y de evaluaciones completas.
- */
+/** Fila de la lista de puestos del orden de mérito (CU028 paso 4). */
 public class PuestoBusquedaDTO {
 
     private final int codigo;

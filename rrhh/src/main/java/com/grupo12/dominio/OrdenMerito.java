@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Orden de mérito emitido para un puesto sobre una o más evaluaciones (CU028).
- */
+/** Orden de mérito emitido para un puesto sobre una o más evaluaciones (CU028). */
 public class OrdenMerito {
 
     private int id_orden_merito;
@@ -17,11 +15,6 @@ public class OrdenMerito {
     private List<Evaluacion> evaluaciones = new ArrayList<>();
     private List<Renglon_Orden_Merito> renglones = new ArrayList<>();
 
-    /**
-     * Agrega al reporte un candidato asociado a las evaluaciones seleccionadas.
-     *
-     * @param puntaje puntaje obtenido, o null si su cuestionario no está completo
-     */
     public void agregar_renglon(Candidato candidato, Cuestionario cuestionario, Double puntaje) {
         Renglon_Orden_Merito renglon = new Renglon_Orden_Merito();
         renglon.setCandidato(candidato);
@@ -31,10 +24,8 @@ public class OrdenMerito {
     }
 
     /**
-     * Conforma el orden de mérito (CU028 paso 7): lo integran los candidatos con
-     * cuestionario completo que alcanzaron las ponderaciones mínimas de cada
-     * competencia del puesto, ordenados por puntaje obtenido. El resto de los
-     * candidatos queda a continuación, agrupado por estado del cuestionario.
+     * Conforma el orden de mérito (CU028 paso 7): lo integran los candidatos con cuestionario completo que
+     * alcanzaron las ponderaciones mínimas de cada competencia del puesto, ordenados por puntaje obtenido.
      */
     public void generar() {
         List<Renglon_Orden_Merito> integran = new ArrayList<>();
@@ -81,7 +72,6 @@ public class OrdenMerito {
         }
     }
 
-    /** Orden en que se listan los grupos de candidatos que no integran el orden de mérito. */
     private static int ordenDeGrupo(Estado estado) {
         switch (estado) {
             case COMPLETO:

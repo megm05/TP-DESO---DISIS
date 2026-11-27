@@ -1,10 +1,6 @@
 package com.grupo12.persistencia;
 
-/**
- * Punto único donde se elige la implementación de cada DAO. Los gestores trabajan
- * contra las interfaces: cambiar de motor de base de datos (o usar una
- * implementación en memoria para pruebas) solo requiere modificar esta clase.
- */
+/** Punto único donde se elige la implementación de cada DAO. */
 public final class FabricaDAO {
 
     private FabricaDAO() {

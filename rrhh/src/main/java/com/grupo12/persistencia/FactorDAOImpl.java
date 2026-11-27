@@ -3,7 +3,7 @@ package com.grupo12.persistencia;
 import com.grupo12.dominio.Factor;
 import java.util.List;
 
-/** Implementación JDBC (PostgreSQL) de {@link FactorDAO}. */
+/** Implementación JDBC (PostgreSQL) de FactorDAO. */
 public class FactorDAOImpl extends DAOBase implements FactorDAO {
 
     @Override

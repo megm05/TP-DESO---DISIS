@@ -1,15 +1,13 @@
 package com.grupo12.dominio;
 
 /**
- * Renglón del orden de mérito: un candidato de las evaluaciones seleccionadas, con
- * su posición (si integra el orden de mérito) y su puntaje (si completó el cuestionario).
+ * Renglón del orden de mérito: un candidato de las evaluaciones seleccionadas, con su posición (si integra el
+ * orden de mérito) y su puntaje (si completó el cuestionario).
  */
 public class Renglon_Orden_Merito {
 
     private int nro_renglon;
-    /** Posición en el orden de mérito; null si el candidato no lo integra. */
     private Integer posicion;
-    /** Puntaje obtenido; null si el cuestionario no está completo. */
     private Double puntaje_obtenido;
     private Candidato candidato;
     private Cuestionario cuestionario;

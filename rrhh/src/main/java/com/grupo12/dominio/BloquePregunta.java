@@ -3,10 +3,7 @@ package com.grupo12.dominio;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Bloque de preguntas de un cuestionario (un paso del wizard). Una vez completado
- * no puede volver a verse ni modificarse.
- */
+/** Bloque de preguntas de un cuestionario (un paso del wizard). */
 public class BloquePregunta {
 
     private int id_bloque;
@@ -14,7 +11,6 @@ public class BloquePregunta {
     private boolean completado;
     private List<Respuesta> respuestas = new ArrayList<>();
 
-    /** Cierra el bloque: ya no puede volver a verse ni modificarse. */
     public void completar() {
         this.completado = true;
     }

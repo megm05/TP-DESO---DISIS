@@ -8,9 +8,5 @@ public interface PuestoDAO {
 
     Puesto obtener_por_id(int id);
 
-    /**
-     * Búsqueda de puestos por código, nombre del puesto y empresa. Nombre y empresa
-     * se buscan por "contiene"; los criterios vacíos o nulos no se aplican.
-     */
     List<Puesto> buscar_por_filtros(Integer codigo, String nombre, String empresa);
 }

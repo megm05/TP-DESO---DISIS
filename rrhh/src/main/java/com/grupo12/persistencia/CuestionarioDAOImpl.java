@@ -23,17 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** Implementación JDBC (PostgreSQL) de {@link CuestionarioDAO}. */
+/** Implementación JDBC (PostgreSQL) de CuestionarioDAO. */
 public class CuestionarioDAOImpl extends DAOBase implements CuestionarioDAO {
 
     private static final String SELECT = "SELECT q.id_cuestionario, q.id_evaluacion, q.clave, q.estado,"
             + " q.fecha_ini, q.fecha_fin, q.ultimo_ingreso, q.fecha_cambio_estado, q.cant_accesos,"
             + " q.tiempo_max, " + CandidatoDAOImpl.COLUMNAS
             + " FROM Cuestionario q JOIN Candidato ca ON ca.id_candidato = q.id_candidato";
-
-    // ------------------------------------------------------------------
-    //  Consultas
-    // ------------------------------------------------------------------
 
     @Override
     public Cuestionario obtener_por_id(int id) {
@@ -91,10 +87,6 @@ public class CuestionarioDAOImpl extends DAOBase implements CuestionarioDAO {
                 puesto.getId_puesto(), Estado.COMPLETO);
     }
 
-    // ------------------------------------------------------------------
-    //  Altas y modificaciones
-    // ------------------------------------------------------------------
-
     @Override
     public void guardar(Cuestionario cuestionario) {
         int id = insertar("INSERT INTO Cuestionario (id_evaluacion, id_candidato, clave, estado, fecha_ini,"
@@ -124,7 +116,6 @@ public class CuestionarioDAOImpl extends DAOBase implements CuestionarioDAO {
         guardarResultados(cuestionario);
     }
 
-    /** Inserta los bloques y respuestas nuevos y actualiza los existentes. */
     private void guardarBloques(Cuestionario cuestionario) {
         for (BloquePregunta bloque : cuestionario.getBloques()) {
             if (bloque.getId_bloque() == 0) {
@@ -152,7 +143,6 @@ public class CuestionarioDAOImpl extends DAOBase implements CuestionarioDAO {
         }
     }
 
-    /** Reemplaza los resultados guardados por los calculados en el cuestionario. */
     private void guardarResultados(Cuestionario cuestionario) {
         if (cuestionario.obtener_resultados_competencia().isEmpty()) {
             return;
@@ -171,11 +161,6 @@ public class CuestionarioDAOImpl extends DAOBase implements CuestionarioDAO {
         }
     }
 
-    // ------------------------------------------------------------------
-    //  Armado de objetos
-    // ------------------------------------------------------------------
-
-    /** Cabecera del cuestionario con su candidato; la evaluación queda solo con su identificador. */
     private static Cuestionario mapear(ResultSet rs) throws SQLException {
         Cuestionario cuestionario = new Cuestionario();
         cuestionario.setId_cuestionario(rs.getInt("id_cuestionario"));
@@ -194,7 +179,6 @@ public class CuestionarioDAOImpl extends DAOBase implements CuestionarioDAO {
         return cuestionario;
     }
 
-    /** Completa el cuestionario con su evaluación (y puesto), sus bloques, respuestas y resultados. */
     private void completar(Cuestionario cuestionario) {
         cuestionario.setEvaluacion(new EvaluacionDAOImpl()
                 .obtenerCabecera(cuestionario.getEvaluacion().getId_evaluacion()));
@@ -255,7 +239,6 @@ public class CuestionarioDAOImpl extends DAOBase implements CuestionarioDAO {
         cargarResultados(Collections.singletonList(cuestionario));
     }
 
-    /** Carga los resultados por competencia y por factor de los cuestionarios recibidos. */
     private void cargarResultados(List<Cuestionario> cuestionarios) {
         if (cuestionarios.isEmpty()) {
             return;

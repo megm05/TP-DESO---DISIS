@@ -4,13 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Evaluación: convocatoria de un grupo de candidatos para un puesto (CU025).
- * Está compuesta por un cuestionario por cada candidato convocado.
- */
+/** Evaluación: convocatoria de un grupo de candidatos para un puesto (CU025). */
 public class Evaluacion {
 
-    /** Estado de una evaluación recién generada. */
     public static final String ESTADO_GENERADA = "GENERADA";
 
     private int id_evaluacion;
@@ -40,12 +36,8 @@ public class Evaluacion {
     }
 
     /**
-     * Crea un cuestionario en estado ACTIVO por cada candidato a evaluar, cada uno
-     * con su clave de ingreso aleatoria (CU025, requerimientos especiales). Las
-     * preguntas se asocian recién cuando el candidato ingresa por primera vez
-     * (CU026 paso 3).
-     *
-     * @param tiempo_max horas máximas para completar el cuestionario desde el primer ingreso
+     * Crea un cuestionario en estado ACTIVO por cada candidato a evaluar, cada uno con su clave de ingreso
+     * aleatoria (CU025, requerimientos especiales).
      */
     public List<Cuestionario> generar_cuestionarios(float tiempo_max) {
         cuestionarios = new ArrayList<>();

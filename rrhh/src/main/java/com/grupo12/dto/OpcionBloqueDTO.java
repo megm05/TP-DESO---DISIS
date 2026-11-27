@@ -1,8 +1,6 @@
 package com.grupo12.dto;
 
-/**
- * Opción que puede elegir el candidato para una pregunta. No incluye la ponderación.
- */
+/** Opción que puede elegir el candidato para una pregunta. */
 public class OpcionBloqueDTO {
 
     private final int id_detalle;

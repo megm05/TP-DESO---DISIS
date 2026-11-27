@@ -1,8 +1,6 @@
--- =====================================================================
---  Datos iniciales de prueba
---  (parámetros, consultores, empresas, competencias, factores, opciones
---   de respuesta, preguntas, puestos y candidatos)
--- =====================================================================
+-- Datos iniciales de prueba
+-- (parámetros, consultores, empresas, competencias, factores, opciones
+-- de respuesta, preguntas, puestos y candidatos)
 
 -- Repositorio de configuraciones
 INSERT INTO Parametro (clave, valor, descripcion) VALUES ('INSTRUCCIONES', 'BIENVENIDO/A AL PROCESO DE EVALUACION DE CAPIT@L HUMANO. A CONTINUACION SE LE PRESENTARA UN CUESTIONARIO DE OPCION MULTIPLE CON UNA UNICA RESPUESTA POR PREGUNTA. LAS PREGUNTAS SE MUESTRAN EN BLOQUES: DEBE RESPONDER TODAS LAS PREGUNTAS DE UN BLOQUE PARA AVANZAR AL SIGUIENTE. UNA VEZ COMPLETADO UN BLOQUE NO PODRA VOLVER A VERLO NI MODIFICARLO. PUEDE INTERRUMPIR EL CUESTIONARIO Y CONTINUARLO MAS TARDE CON LA MISMA CLAVE, DENTRO DEL TIEMPO MAXIMO Y DE LA CANTIDAD DE ACCESOS PERMITIDOS. RESPONDA CON SINCERIDAD: NO HAY LIMITE DE TIEMPO POR PREGUNTA.', 'Instrucciones que se muestran al candidato antes de iniciar el cuestionario (CU026)');
@@ -12,7 +10,7 @@ INSERT INTO Parametro (clave, valor, descripcion) VALUES ('TIEMPO_MAX_ACTIVO', '
 INSERT INTO Parametro (clave, valor, descripcion) VALUES ('MAX_ACCESOS', '5', 'Cantidad maxima de accesos permitidos al cuestionario');
 
 -- Consultores (la contraseña se almacena como hash SHA-256)
---   CONSULTOR / consultor123      ADMIN / admin123
+-- CONSULTOR / consultor123      ADMIN / admin123
 INSERT INTO Consultor (id_consultor, nombre_usuario, contrasenia, nombre, apellido) VALUES (1, 'CONSULTOR', '7e31b85bb0182bf78c7ee2f6ed34e746292d8cff61320390cf685d59f878381a', 'LAURA', 'FERNANDEZ');
 INSERT INTO Consultor (id_consultor, nombre_usuario, contrasenia, nombre, apellido) VALUES (2, 'ADMIN', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'MARTIN', 'GOMEZ');
 

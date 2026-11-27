@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** Implementación JDBC (PostgreSQL) de {@link PuestoDAO}. */
+/** Implementación JDBC (PostgreSQL) de PuestoDAO. */
 public class PuestoDAOImpl extends DAOBase implements PuestoDAO {
 
     private static final String SELECT = "SELECT pu.id_puesto, pu.nombre, pu.descripcion,"
@@ -60,7 +60,6 @@ public class PuestoDAOImpl extends DAOBase implements PuestoDAO {
         return puestos;
     }
 
-    /** Carga, para todos los puestos a la vez, sus competencias requeridas con la ponderación mínima. */
     private void cargarCaracteristicas(List<Puesto> puestos) {
         if (puestos.isEmpty()) {
             return;

@@ -1,8 +1,6 @@
 package com.grupo12.dto;
 
-/**
- * Función o puesto con el nombre de su empresa, para seleccionarlo (CU025 paso 8).
- */
+/** Función o puesto con el nombre de su empresa, para seleccionarlo (CU025 paso 8). */
 public class PuestoSeleccionDTO {
 
     private final int id_puesto;

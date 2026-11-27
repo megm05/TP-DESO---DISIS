@@ -1,0 +1,46 @@
+@startuml despliegue
+title Diagrama de Despliegue
+skinparam shadowing false
+skinparam nodesep 70
+skinparam ranksep 90
+left to right direction
+
+node "PC Consultor" <<device>> {
+  node "Navegador Web" <<execution environment>> as NAV1 {
+    artifact "Pantallas del consultor\n(HTML + CSS + JS)" as UIC
+  }
+}
+
+node "PC Candidato" <<device>> {
+  node "Navegador Web " <<execution environment>> as NAV2 {
+    artifact "Pantallas del cuestionario\n(HTML + CSS + JS)" as UICAND
+  }
+}
+
+node "Servidor de Aplicación" <<device>> {
+  node "JVM (Java 17 o superior)" <<execution environment>> {
+    artifact "gestion-evaluaciones.jar" as JAR
+    artifact "lib/postgresql-42.7.3.jar" as DRV
+    artifact "config.properties" as CFG
+  }
+}
+
+node "Servidor de Base de Datos" <<device>> {
+  database "PostgreSQL 16" <<execution environment>> {
+    artifact "base de datos rrhh" as BD
+  }
+}
+
+node "Impresora" <<device>> as IMP
+
+UIC --> JAR : HTTP (puerto 8080)
+UICAND --> JAR : HTTP (puerto 8080)
+JAR --> BD : JDBC / TCP-IP (puerto 5432)
+NAV1 ..> IMP : impresión del orden de mérito
+
+note bottom of JAR
+  Servidor web embebido (com.sun.net.httpserver).
+  Capas: Presentación (Pantallas), Controladores
+  (Gestores), Dominio y Persistencia (DAO + JDBC).
+end note
+@enduml

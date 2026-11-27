@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Implementación JDBC (PostgreSQL) de {@link OpcionRespuestaDAO}. */
+/** Implementación JDBC (PostgreSQL) de OpcionRespuestaDAO. */
 public class OpcionRespuestaDAOImpl extends DAOBase implements OpcionRespuestaDAO {
 
     @Override

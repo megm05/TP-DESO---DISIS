@@ -1,8 +1,6 @@
 package com.grupo12.dto;
 
-/**
- * Competencia asociada a la función con la ponderación requerida (CU025 paso 9).
- */
+/** Competencia asociada a la función con la ponderación requerida (CU025 paso 9). */
 public class CompetenciaRequeridaDTO {
 
     private final String nombre_competencia;

@@ -2,10 +2,7 @@ package com.grupo12.dominio;
 
 import java.time.LocalDateTime;
 
-/**
- * Asocia una pregunta a un bloque del cuestionario y registra la opción que eligió
- * el candidato. Se crea vacía al armar el cuestionario y se completa al responder.
- */
+/** Asocia una pregunta a un bloque del cuestionario y registra la opción que eligió el candidato. */
 public class Respuesta {
 
     private int id_respuesta;
@@ -15,11 +12,6 @@ public class Respuesta {
     private Detalle_opcion detalle_elegido;
     private Candidato candidato;
 
-    /**
-     * Registra la opción elegida por el candidato.
-     *
-     * @throws IllegalArgumentException si la opción no pertenece a la opción de respuesta de la pregunta
-     */
     public void registrar(Detalle_opcion detalle) {
         boolean pertenece = false;
         for (Detalle_opcion posible : pregunta.getOpcion_respuesta().obtener_detalles()) {
@@ -36,7 +28,6 @@ public class Respuesta {
         this.fecha = LocalDateTime.now();
     }
 
-    /** Ponderación de la opción elegida; 0 si todavía no fue respondida. */
     public double obtener_ponderacion() {
         return pregunta.obtener_ponderacion(detalle_elegido);
     }

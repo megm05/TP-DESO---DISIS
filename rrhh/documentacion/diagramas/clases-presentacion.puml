@@ -1,0 +1,81 @@
+@startuml clases-presentacion
+title Diagrama de Clases - Presentación (pantallas)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor White
+  BorderColor #555555
+  ArrowColor #555555
+}
+hide empty members
+left to right direction
+
+package "presentacion" {
+abstract class Pantalla {
+  +atender(peticion: Peticion): RespuestaHttp
+}
+class PantallaLogin
+class PantallaPrincipal
+class PantallaGestionPreguntas
+class PantallaAltaPregunta
+class PantallaModificarPregunta
+class PantallaEvaluarCandidatos
+class PantallaCuestionario
+class PantallaOrdenMerito
+class ServidorWeb {
+  -puerto: int
+  -servidor: HttpServer
+  -hilos: ExecutorService
+  +iniciar(): void
+  +detener(): void
+}
+class Sesion {
+  -id: String
+  -atributos: Map<String, Object>
+  -mensajes: List<String>
+  -ultimoAcceso: long
+  +get(clave: String): T
+  +put(clave: String, valor: Object): void
+  +tomarMensajes(): List<String>
+  +agregarMensaje(mensaje: String): void
+  +quitar(clave: String): void
+}
+}
+package "gestores" {
+class Gestor_de_autenticacion
+class Gestor_de_pregunta
+class Gestor_de_competencia
+class Gestor_de_factor
+class Gestor_de_respuesta
+class Gestor_de_puesto
+class Gestor_de_candidato
+class Gestor_de_evaluacion
+class Gestor_de_cuestionario
+class Gestor_de_orden_merito
+}
+Pantalla <|-- PantallaLogin
+Pantalla <|-- PantallaPrincipal
+Pantalla <|-- PantallaGestionPreguntas
+Pantalla <|-- PantallaAltaPregunta
+Pantalla <|-- PantallaEvaluarCandidatos
+Pantalla <|-- PantallaCuestionario
+Pantalla <|-- PantallaOrdenMerito
+PantallaAltaPregunta <|-- PantallaModificarPregunta
+ServidorWeb "1" o-- "8" Pantalla : dirige los pedidos
+ServidorWeb ..> Sesion
+PantallaLogin ..> Gestor_de_autenticacion
+PantallaGestionPreguntas ..> Gestor_de_pregunta
+PantallaAltaPregunta ..> Gestor_de_pregunta
+PantallaAltaPregunta ..> Gestor_de_competencia
+PantallaAltaPregunta ..> Gestor_de_factor
+PantallaAltaPregunta ..> Gestor_de_respuesta
+PantallaEvaluarCandidatos ..> Gestor_de_evaluacion
+PantallaEvaluarCandidatos ..> Gestor_de_candidato
+PantallaEvaluarCandidatos ..> Gestor_de_puesto
+PantallaCuestionario ..> Gestor_de_cuestionario
+PantallaOrdenMerito ..> Gestor_de_orden_merito
+@enduml

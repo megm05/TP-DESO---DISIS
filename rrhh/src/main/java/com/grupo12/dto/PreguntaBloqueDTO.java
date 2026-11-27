@@ -3,8 +3,8 @@ package com.grupo12.dto;
 import java.util.List;
 
 /**
- * Pregunta de un bloque tal como se le presenta al candidato (CU026 paso 4): el
- * enunciado y los textos de las opciones, SIN las ponderaciones.
+ * Pregunta de un bloque tal como se le presenta al candidato (CU026 paso 4): el enunciado y los textos de las
+ * opciones, SIN las ponderaciones.
  */
 public class PreguntaBloqueDTO {
 

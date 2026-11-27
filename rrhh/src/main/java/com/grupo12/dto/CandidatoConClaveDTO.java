@@ -1,9 +1,6 @@
 package com.grupo12.dto;
 
-/**
- * Fila de la lista de candidatos a evaluar con su clave de ingreso (CU025 paso 11).
- * Combina datos del candidato y de su cuestionario.
- */
+/** Fila de la lista de candidatos a evaluar con su clave de ingreso (CU025 paso 11). */
 public class CandidatoConClaveDTO {
 
     private final String apellido;

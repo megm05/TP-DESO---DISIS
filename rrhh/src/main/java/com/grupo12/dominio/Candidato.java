@@ -2,10 +2,7 @@ package com.grupo12.dominio;
 
 import java.time.LocalDate;
 
-/**
- * Candidato a un puesto. Se importa desde el sistema de Gestión de Candidatos y CV
- * (CU006) y se identifica por su número de candidato.
- */
+/** Candidato a un puesto. */
 public class Candidato extends Usuario {
 
     private int id_candidato;
@@ -99,7 +96,6 @@ public class Candidato extends Usuario {
         this.escolaridad = escolaridad;
     }
 
-    /** Dos candidatos son el mismo si tienen el mismo número de candidato. */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

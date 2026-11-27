@@ -48,22 +48,10 @@ public class Gestor_de_cuestionario {
         this.parametroDAO = parametroDAO;
     }
 
-    // ------------------------------------------------------------------
-    //  Ingreso al cuestionario (precondiciones y flujos 1.A, 1.B y 1.C)
-    // ------------------------------------------------------------------
-
-    /** Cuestionario en estado activo o en proceso del candidato; null si no tiene ninguno. */
     public Cuestionario obtener_cuestionario_activo(Candidato candidato) {
         return cuestionarioDAO.obtener_activo_por_candidato(candidato);
     }
 
-    /**
-     * Controla los vencimientos y la cantidad de accesos cada vez que el candidato
-     * ingresa a completar el cuestionario, y cuenta el nuevo acceso.
-     *
-     * @return el aviso a mostrar si el cuestionario fue cerrado (INCOMPLETO o SIN_CONTESTAR);
-     *         null si el candidato puede continuar
-     */
     public String registrar_ingreso(Cuestionario cuestionario) {
         return Transaccion.ejecutar(() -> {
             String aviso = null;
@@ -91,21 +79,15 @@ public class Gestor_de_cuestionario {
         });
     }
 
-    /** Instrucciones del cuestionario, tomadas del repositorio de configuraciones del sistema. */
     public String obtener_instrucciones() {
         Parametro parametro = parametroDAO.obtener_por_clave(Parametro.INSTRUCCIONES);
         return parametro == null ? "" : parametro.getValor();
     }
 
-    // ------------------------------------------------------------------
-    //  Inicio (paso 3)
-    // ------------------------------------------------------------------
-
     /**
-     * Paso 3: recupera las competencias a evaluar y sus factores, asocia al
-     * cuestionario las preguntas elegidas al azar, lo guarda para que pueda
-     * presentarse de forma idéntica si el candidato vuelve a ingresar, registra el
-     * día y hora de comienzo y lo pasa a "En Proceso".
+     * Paso 3: recupera las competencias a evaluar y sus factores, asocia al cuestionario las preguntas
+     * elegidas al azar, lo guarda para que pueda presentarse de forma idéntica si el candidato vuelve a
+     * ingresar, registra el día y hora de comienzo y lo pasa a "En Proceso".
      */
     public void iniciar_cuestionario(Cuestionario cuestionario) {
         if (cuestionario.getEstado_cuestionario() != Estado.ACTIVO) {
@@ -132,10 +114,7 @@ public class Gestor_de_cuestionario {
         });
     }
 
-    /**
-     * Toma aleatoriamente 2 preguntas por cada factor a evaluar (CU026 observación 1).
-     * Los factores que no disponen de al menos 2 preguntas vigentes no se evalúan.
-     */
+    /** Toma aleatoriamente 2 preguntas por cada factor a evaluar (CU026 observación 1). */
     public List<Pregunta> seleccionar_preguntas(List<Factor> modelo) {
         List<Pregunta> seleccionadas = new ArrayList<>();
         for (Factor factor : modelo) {
@@ -148,14 +127,6 @@ public class Gestor_de_cuestionario {
         return seleccionadas;
     }
 
-    // ------------------------------------------------------------------
-    //  Wizard de bloques (pasos 4 a 8)
-    // ------------------------------------------------------------------
-
-    /**
-     * Preguntas del bloque que aún no ha sido respondido, tal como se presentan al
-     * candidato (sin las ponderaciones). Lista vacía si no quedan bloques.
-     */
     public List<PreguntaBloqueDTO> obtener_bloque_actual(Cuestionario cuestionario) {
         List<PreguntaBloqueDTO> preguntas = new ArrayList<>();
         BloquePregunta bloque = cuestionario.obtener_bloque_no_respondido();
@@ -175,14 +146,7 @@ public class Gestor_de_cuestionario {
         return preguntas;
     }
 
-    /**
-     * Pasos 5 a 7: guarda las respuestas del bloque actual. Si el candidato
-     * respondió todas las preguntas, el bloque queda cerrado.
-     *
-     * @param respuestas opción elegida (id_detalle) por cada respuesta (id_respuesta)
-     * @return flujo 6.A: las preguntas del bloque que no han sido respondidas (lista vacía
-     *         si el bloque quedó completo)
-     */
+    /** Pasos 5 a 7: guarda las respuestas del bloque actual. */
     public List<Pregunta> registrar_respuestas_bloque(Cuestionario cuestionario, Map<Integer, Integer> respuestas) {
         return Transaccion.ejecutar(() -> {
             BloquePregunta bloque = cuestionario.obtener_bloque_no_respondido();
@@ -216,8 +180,8 @@ public class Gestor_de_cuestionario {
     }
 
     /**
-     * Paso 8: calcula el puntaje de los factores y competencias, guarda los
-     * resultados y pasa el cuestionario a "Completo".
+     * Paso 8: calcula el puntaje de los factores y competencias, guarda los resultados y pasa el cuestionario
+     * a "Completo".
      */
     public void finalizar(Cuestionario cuestionario) {
         if (cuestionario.getEstado_cuestionario() != Estado.EN_PROCESO

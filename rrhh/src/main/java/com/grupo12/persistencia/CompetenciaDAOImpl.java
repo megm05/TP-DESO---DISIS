@@ -3,7 +3,7 @@ package com.grupo12.persistencia;
 import com.grupo12.dominio.Competencia;
 import java.util.List;
 
-/** Implementación JDBC (PostgreSQL) de {@link CompetenciaDAO}. */
+/** Implementación JDBC (PostgreSQL) de CompetenciaDAO. */
 public class CompetenciaDAOImpl extends DAOBase implements CompetenciaDAO {
 
     @Override

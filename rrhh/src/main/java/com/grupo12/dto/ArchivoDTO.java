@@ -1,8 +1,6 @@
 package com.grupo12.dto;
 
-/**
- * Archivo generado por el sistema para que el actor lo guarde (CU025 pasos 15 a 17).
- */
+/** Archivo generado por el sistema para que el actor lo guarde (CU025 pasos 15 a 17). */
 public class ArchivoDTO {
 
     private final String nombre_archivo;

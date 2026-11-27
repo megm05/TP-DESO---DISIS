@@ -4,7 +4,7 @@ import com.grupo12.dominio.Evaluacion;
 import com.grupo12.dominio.OrdenMerito;
 import com.grupo12.dominio.Renglon_Orden_Merito;
 
-/** Implementación JDBC (PostgreSQL) de {@link OrdenMeritoDAO}. */
+/** Implementación JDBC (PostgreSQL) de OrdenMeritoDAO. */
 public class OrdenMeritoDAOImpl extends DAOBase implements OrdenMeritoDAO {
 
     @Override

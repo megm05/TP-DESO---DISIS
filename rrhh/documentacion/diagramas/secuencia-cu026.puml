@@ -1,0 +1,145 @@
+@startuml secuencia-cu026
+title CU026 - Completar Cuestionario
+skinparam shadowing false
+skinparam sequenceMessageAlign left
+skinparam responseMessageBelowArrow true
+autonumber
+
+actor Candidato
+participant ":PantallaCuestionario" as PT
+participant ":Gestor_de_cuestionario" as GQ
+participant ":CuestionarioDAO" as QDAO
+participant ":ParametroDAO" as PARDAO
+participant ":PreguntaDAO" as PDAO
+participant ":RespuestaDAO" as RDAO
+participant "cuestionario:Cuestionario" as CU
+participant "competencia:Competencia" as COMP
+participant "factor:Factor" as FAC
+participant "bloque:BloquePregunta" as BQ
+participant "respuesta:Respuesta" as RES
+
+note over Candidato, PT : el candidato se autenticó con tipo y número de documento y clave (CU001, flujo 3.A)
+Candidato -> PT : ingresa a completar el cuestionario
+activate PT
+PT -> GQ : obtener_cuestionario_activo(candidato)
+activate GQ
+GQ -> QDAO : obtener_activo_por_candidato(candidato)
+QDAO --> GQ : cuestionario (con sus bloques y respuestas)
+GQ --> PT : cuestionario
+deactivate GQ
+
+== Control de ingreso (una vez por ingreso) ==
+PT -> GQ : registrar_ingreso(cuestionario)
+activate GQ
+GQ -> CU : vencio_plazo_completado()
+CU --> GQ : boolean
+break 1.A superó el tiempo máximo para completarlo
+  GQ -> CU : marcar_incompleto()
+  GQ -> QDAO : actualizar(cuestionario)
+  GQ --> PT : aviso
+  PT --> Candidato : avisa la situación (el CU finaliza)
+end
+GQ -> PARDAO : obtener_por_clave("TIEMPO_MAX_ACTIVO")
+GQ -> CU : vencio_plazo_activacion(horas_max_activo)
+CU --> GQ : boolean
+break 1.B superó el tiempo máximo en estado activo
+  GQ -> CU : marcar_sin_contestar()
+  GQ -> QDAO : actualizar(cuestionario)
+  GQ --> PT : aviso
+  PT --> Candidato : avisa la situación (el CU finaliza)
+end
+GQ -> PARDAO : obtener_por_clave("MAX_ACCESOS")
+GQ -> CU : supero_max_accesos(max)
+CU --> GQ : boolean
+break precondición: superó la cantidad máxima de accesos
+  GQ -> CU : marcar_incompleto()
+  GQ -> QDAO : actualizar(cuestionario)
+  GQ --> PT : aviso
+  PT --> Candidato : mensaje indicando la situación (el CU finaliza)
+end
+GQ -> CU : registrar_ingreso()
+GQ -> QDAO : actualizar(cuestionario)
+GQ --> PT : null (puede continuar)
+deactivate GQ
+
+== Instrucciones e inicio (pasos 1 a 3) ==
+alt el cuestionario está ACTIVO
+  PT -> GQ : obtener_instrucciones()
+  GQ -> PARDAO : obtener_por_clave("INSTRUCCIONES")
+  GQ --> PT : instrucciones
+  PT --> Candidato : "Cuestionario - Instrucciones" [Aceptar] [Cancelar]
+  break 2.A el actor presiona "Cancelar"
+    PT --> Candidato : el CU termina
+  end
+  Candidato -> PT : lee las instrucciones y presiona "Aceptar"
+  PT -> GQ : iniciar_cuestionario(cuestionario)
+  activate GQ
+  loop por cada competencia del puesto
+    GQ -> COMP : obtener_factores()
+    loop por cada factor
+      GQ -> FAC : preguntas_suficientes()
+    end
+  end
+  GQ -> GQ : seleccionar_preguntas(modelo)
+  loop por cada factor con al menos 2 preguntas
+    GQ -> PDAO : obtener_activas_por_factor(factor)
+    PDAO --> GQ : list<Pregunta>
+    GQ -> GQ : elige 2 preguntas al azar
+  end
+  GQ -> PARDAO : obtener_por_clave("PREGUNTAS_POR_BLOQUE")
+  GQ -> CU : armar_cuestionario(preguntas, cant_por_bloque)
+  note right of CU : mezcla las preguntas de distintos factores\ny competencias y crea los BloquePregunta con\nuna Respuesta vacía por pregunta
+  GQ -> CU : marcar_en_proceso()
+  note right of CU : registra día y hora de comienzo
+  GQ -> QDAO : actualizar(cuestionario)
+  note right of QDAO : se guarda para presentarlo\nde forma idéntica si vuelve a ingresar
+  deactivate GQ
+else 1.C el cuestionario ya estaba EN PROCESO
+  note over PT : se posiciona en el bloque que aún no fue respondido
+end
+
+== Wizard de bloques (pasos 4 a 8) ==
+loop 8.A mientras queden bloques sin responder
+  PT -> GQ : obtener_bloque_actual(cuestionario)
+  activate GQ
+  GQ -> CU : obtener_bloque_no_respondido()
+  CU --> GQ : bloque
+  GQ -> BQ : obtener_respuestas()
+  BQ --> GQ : list<Respuesta>
+  GQ --> PT : list<PreguntaBloqueDTO> (sin ponderaciones)
+  deactivate GQ
+  PT --> Candidato : paso del wizard con las preguntas del bloque
+  loop 6.A hasta que el bloque esté completo
+    Candidato -> PT : contesta y presiona "Siguiente" (o "Finalizar")
+    PT -> GQ : registrar_respuestas_bloque(cuestionario, respuestas)
+    activate GQ
+    loop por cada pregunta respondida
+      GQ -> RES : registrar(detalle)
+      GQ -> RDAO : actualizar(respuesta)
+    end
+    GQ -> BQ : esta_completo()
+    BQ --> GQ : boolean
+    opt 6.A no respondió todas las preguntas
+      GQ --> PT : list<Pregunta> sin responder
+      PT --> Candidato : indica qué preguntas no fueron respondidas,\nmanteniendo las ya respondidas
+    end
+    GQ -> BQ : completar()
+    GQ -> QDAO : actualizar(cuestionario)
+    deactivate GQ
+  end
+end
+
+PT -> GQ : finalizar(cuestionario)
+activate GQ
+GQ -> CU : calcular_puntaje()
+activate CU
+note right of CU : observación (3): por factor, suma de las\nponderaciones elegidas / 2; por competencia,\nsuma de los factores / cantidad de factores
+CU -> CU : crea Resultado_factor y Resultado_competencia
+deactivate CU
+GQ -> CU : marcar_completo()
+GQ -> QDAO : actualizar(cuestionario)
+note right of QDAO : guarda los resultados en cascada
+deactivate GQ
+PT --> Candidato : "El cuestionario ha sido completado con éxito."
+deactivate PT
+@enduml

@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Demarca transacciones sobre la conexión del hilo actual: todo lo que el gestor
- * ejecute dentro de una transacción se confirma junto o no se confirma.
+ * Demarca transacciones sobre la conexión del hilo actual: todo lo que el gestor ejecute dentro de una
+ * transacción se confirma junto o no se confirma.
  */
 public final class Transaccion {
 
@@ -17,7 +17,6 @@ public final class Transaccion {
     private Transaccion() {
     }
 
-    /** Ejecuta la operación en una transacción y devuelve su resultado. */
     public static <T> T ejecutar(Operacion<T> operacion) {
         Connection conexion = ConexionBD.obtener();
         boolean propia;
@@ -55,7 +54,6 @@ public final class Transaccion {
         }
     }
 
-    /** Ejecuta una acción sin resultado dentro de una transacción. */
     public static void realizar(Runnable accion) {
         ejecutar(() -> {
             accion.run();

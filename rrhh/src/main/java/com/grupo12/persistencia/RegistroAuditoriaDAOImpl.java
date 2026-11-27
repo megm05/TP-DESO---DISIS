@@ -3,7 +3,7 @@ package com.grupo12.persistencia;
 import com.grupo12.dominio.Auditoria;
 import com.grupo12.dominio.Registro_pregunta;
 
-/** Implementación JDBC (PostgreSQL) de {@link RegistroAuditoriaDAO}. */
+/** Implementación JDBC (PostgreSQL) de RegistroAuditoriaDAO. */
 public class RegistroAuditoriaDAOImpl extends DAOBase implements RegistroAuditoriaDAO {
 
     @Override

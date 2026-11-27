@@ -1,0 +1,112 @@
+@startuml secuencia-cu021
+title CU021 - Dar de alta Pregunta
+skinparam shadowing false
+skinparam sequenceMessageAlign left
+skinparam responseMessageBelowArrow true
+autonumber
+
+actor Consultor
+participant ":PantallaAltaPregunta" as PT
+participant ":Gestor_de_competencia" as GC
+participant ":Gestor_de_factor" as GF
+participant ":Gestor_de_respuesta" as GR
+participant ":Gestor_de_pregunta" as GP
+participant ":CompetenciaDAO" as CDAO
+participant ":FactorDAO" as FDAO
+participant ":OpcionRespuestaDAO" as ODAO
+participant ":PreguntaDAO" as PDAO
+participant "opcion:Opcion_respuesta" as OR
+participant "pregunta:Pregunta" as PREG
+
+activate PT
+loop el actor desea cargar otra pregunta
+  PT -> GC : buscar(null)
+  activate GC
+  GC -> CDAO : buscar_por_nombre(null)
+  CDAO --> GC : list<Competencia>
+  GC --> PT : list<Competencia>
+  deactivate GC
+  PT -> GR : buscar(null)
+  activate GR
+  GR -> ODAO : obtener_todos()
+  ODAO --> GR : list<Opcion_respuesta>
+  GR --> PT : list<Opcion_respuesta>
+  deactivate GR
+  PT --> Consultor : pantalla de alta (Competencia, Factor, Nombre de Pregunta,\nPregunta, Descripción, Opción de Respuesta)\n[Generar con IA] [Aceptar] [Cancelar]
+
+  opt el actor selecciona una Competencia
+    Consultor -> PT : selecciona la Competencia
+    PT -> GF : obtener_por_competencia(id_competencia)
+    activate GF
+    GF -> FDAO : obtener_por_competencia(id_competencia)
+    FDAO --> GF : list<Factor>
+    GF --> PT : list<Factor>
+    deactivate GF
+    PT --> Consultor : carga los Factores de la Competencia
+  end
+
+  opt el actor selecciona una Opción de Respuesta
+    Consultor -> PT : selecciona la Opción de Respuesta
+    PT -> GR : obtener_detalles(id_opcion)
+    activate GR
+    GR -> ODAO : obtener_por_id(id_opcion)
+    ODAO --> GR : opcion
+    GR -> OR : obtener_detalles()
+    OR --> GR : list<Detalle_opcion>
+    GR --> PT : list<Detalle_opcion>
+    deactivate GR
+    PT --> Consultor : grilla Orden / Descripción (solo lectura)\n/ Ponderación (editable), ordenada por orden
+  end
+
+  note over Consultor, PT : "Generar con IA" (CU033) se muestra deshabilitado:\nno forma parte de esta implementación
+
+  break el actor presiona "Cancelar"
+    PT --> Consultor : redirige al CU020 - Gestionar Preguntas
+  end
+
+  loop hasta que los datos sean válidos
+    Consultor -> PT : ingresa los datos y presiona "Aceptar"
+    PT -> GP : dar_de_alta(datos: DatosPreguntaDTO)
+    activate GP
+    GP -> GP : validar_campos_obligatorios(datos)
+    GP -> GP : validar_longitudes(datos)
+    GP -> GP : validar_ponderaciones(datos)
+    opt 2.A datos faltantes / 2.B longitud excedida / ponderaciones que no suman 10
+      GP --> PT : ValidacionException(TODOS los errores)
+      PT --> Consultor : panel con todas las omisiones, sin tapar campos ni botones
+    end
+    GP -> FDAO : obtener_por_id(id_factor)
+    FDAO --> GP : factor
+    GP -> ODAO : obtener_por_id(id_opcion)
+    ODAO --> GP : opcion
+    GP -> PDAO : existe_pregunta(nombre, null, competencia, factor, 0)
+    PDAO --> GP : boolean
+    GP -> PDAO : existe_pregunta(null, pregunta, competencia, factor, 0)
+    PDAO --> GP : boolean
+    opt 2.C la pregunta ya existe para esa competencia y factor
+      GP --> PT : ValidacionException(validación no superada, campo "nombre")
+      PT --> Consultor : aviso, con foco en el campo Nombre
+    end
+  end
+
+  create PREG
+  GP -> PREG : new Pregunta()
+  note right of PREG : nombre, pregunta y descripción en mayúsculas,\nfactor, opción de respuesta y Ponderacion_opcion\npor cada opción
+  GP -> PDAO : guardar(pregunta)
+  activate PDAO
+  PDAO --> GP
+  deactivate PDAO
+  GP --> PT
+  deactivate GP
+  PT --> Consultor : "La Pregunta <nombre> se ha creado correctamente.\n¿Desea cargar otra?" [SI] [NO]
+
+  alt el actor elige "SI"
+    Consultor -> PT : SI
+    note right of PT : el CU vuelve al paso 1
+  else el actor elige "NO"
+    Consultor -> PT : NO
+    PT --> Consultor : vuelve al CU020 y actualiza la grilla
+  end
+end
+deactivate PT
+@enduml

@@ -3,10 +3,9 @@ package com.grupo12.dominio;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Factor de una competencia. Agrupa las preguntas que lo evalúan. */
+/** Factor de una competencia. */
 public class Factor {
 
-    /** Cantidad de preguntas que se toman por factor en cada cuestionario. */
     public static final int PREGUNTAS_POR_FACTOR = 2;
 
     private int id_factor;
@@ -16,8 +15,8 @@ public class Factor {
     private List<Pregunta> preguntas = new ArrayList<>();
 
     /**
-     * Un factor puede evaluarse si tiene al menos 2 preguntas vigentes
-     * (las dadas de baja lógicamente no cuentan).
+     * Un factor puede evaluarse si tiene al menos 2 preguntas vigentes (las dadas de baja lógicamente no
+     * cuentan).
      */
     public boolean preguntas_suficientes() {
         int vigentes = 0;

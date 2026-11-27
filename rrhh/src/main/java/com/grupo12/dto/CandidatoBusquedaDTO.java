@@ -1,8 +1,6 @@
 package com.grupo12.dto;
 
-/**
- * Fila de la grilla de búsqueda de candidatos (CU025 paso 3).
- */
+/** Fila de la grilla de búsqueda de candidatos (CU025 paso 3). */
 public class CandidatoBusquedaDTO {
 
     private final int num_candidato;

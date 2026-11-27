@@ -4,9 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Datos de la pantalla de alta y de modificación de preguntas (CU021 y CU022):
- * competencia, factor, nombre, pregunta, descripción, opción de respuesta y la
- * ponderación ingresada para cada opción.
+ * Datos de la pantalla de alta y de modificación de preguntas (CU021 y CU022): competencia, factor, nombre,
+ * pregunta, descripción, opción de respuesta y la ponderación ingresada para cada opción.
  */
 public class DatosPreguntaDTO {
 
@@ -19,7 +18,6 @@ public class DatosPreguntaDTO {
     private String pregunta;
     private String descripcion;
     private int id_opcion;
-    /** Ponderación por opción (id_detalle); null cuando no se ingresó un valor numérico. */
     private Map<Integer, Double> ponderaciones = new LinkedHashMap<>();
 
     public int getId_pregunta() {

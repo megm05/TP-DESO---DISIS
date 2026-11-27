@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Total obtenido por un candidato en una competencia: suma de los totales de sus
- * factores dividido la cantidad de factores evaluados (CU026 observación 3).
+ * Total obtenido por un candidato en una competencia: suma de los totales de sus factores dividido la
+ * cantidad de factores evaluados (CU026 observación 3).
  */
 public class Resultado_competencia {
 

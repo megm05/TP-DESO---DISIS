@@ -15,9 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Colaborador interno de los DAO: arma, con pocas consultas, el árbol
- * competencia → factores → preguntas → opción de respuesta y ponderaciones.
- * Se crea una instancia por cada carga.
+ * Colaborador interno de los DAO: arma, con pocas consultas, el árbol competencia → factores → preguntas →
+ * opción de respuesta y ponderaciones.
  */
 final class CargadorCatalogo extends DAOBase {
 
@@ -32,7 +31,6 @@ final class CargadorCatalogo extends DAOBase {
     private final Map<Integer, Factor> factores = new LinkedHashMap<>();
     private final Map<Integer, Integer> opcionPorPregunta = new HashMap<>();
 
-    /** Competencias que cumplen la condición (sobre el alias c), con sus factores y preguntas. */
     List<Competencia> competencias(String condicion, Object... parametros) {
         List<Competencia> lista = consultar("SELECT " + COLUMNAS_COMPETENCIA + " FROM Competencia c"
                 + donde(condicion) + " ORDER BY c.nombre", this::competencia, parametros);
@@ -52,7 +50,6 @@ final class CargadorCatalogo extends DAOBase {
         return lista;
     }
 
-    /** Factores que cumplen la condición (sobre los alias f y c), con su competencia y sus preguntas. */
     List<Factor> factores(String condicion, Object... parametros) {
         List<Factor> lista = consultar("SELECT " + COLUMNAS_FACTOR + ", " + COLUMNAS_COMPETENCIA
                 + " FROM Factor f JOIN Competencia c ON c.id_competencia = f.id_competencia"
@@ -66,10 +63,6 @@ final class CargadorCatalogo extends DAOBase {
         return lista;
     }
 
-    /**
-     * Preguntas que cumplen la condición (sobre los alias p, f y c), con su factor,
-     * su competencia, su opción de respuesta y sus ponderaciones.
-     */
     List<Pregunta> preguntas(String condicion, Object... parametros) {
         List<Pregunta> lista = consultar("SELECT " + COLUMNAS_PREGUNTA + ", " + COLUMNAS_FACTOR + ", "
                 + COLUMNAS_COMPETENCIA + " FROM Pregunta p"
@@ -111,7 +104,6 @@ final class CargadorCatalogo extends DAOBase {
         completar(lista);
     }
 
-    /** Asigna a cada pregunta su opción de respuesta y las ponderaciones de sus opciones. */
     private void completar(List<Pregunta> lista) {
         if (lista.isEmpty()) {
             return;
@@ -145,10 +137,6 @@ final class CargadorCatalogo extends DAOBase {
                     Integer.compare(a.getDetalle().getOrden(), b.getDetalle().getOrden()));
         }
     }
-
-    // ------------------------------------------------------------------
-    //  Conversión de filas a objetos (una única instancia por identificador)
-    // ------------------------------------------------------------------
 
     private Competencia competencia(ResultSet rs) throws SQLException {
         int id = rs.getInt("id_competencia");

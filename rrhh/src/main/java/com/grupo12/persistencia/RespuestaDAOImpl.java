@@ -2,7 +2,7 @@ package com.grupo12.persistencia;
 
 import com.grupo12.dominio.Respuesta;
 
-/** Implementación JDBC (PostgreSQL) de {@link RespuestaDAO}. */
+/** Implementación JDBC (PostgreSQL) de RespuestaDAO. */
 public class RespuestaDAOImpl extends DAOBase implements RespuestaDAO {
 
     @Override

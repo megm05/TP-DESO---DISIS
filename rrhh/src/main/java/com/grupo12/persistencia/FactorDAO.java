@@ -8,6 +8,5 @@ public interface FactorDAO {
 
     Factor obtener_por_id(int id);
 
-    /** Factores que componen una competencia. */
     List<Factor> obtener_por_competencia(int id_competencia);
 }

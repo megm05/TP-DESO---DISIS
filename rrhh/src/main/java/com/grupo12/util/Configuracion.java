@@ -10,15 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-/**
- * Configuración de la aplicación. Se resuelve, de menor a mayor prioridad, con:
- * <ol>
- *   <li>los valores por defecto incluidos en el programa (config-defecto.properties),</li>
- *   <li>el archivo <code>config.properties</code> de la carpeta desde donde se ejecuta,</li>
- *   <li>las propiedades del sistema (<code>-Dclave=valor</code>),</li>
- *   <li>la opción <code>--demo</code>, que usa una base de datos embebida sin instalación.</li>
- * </ol>
- */
+/** Configuración de la aplicación. */
 public final class Configuracion {
 
     public static final String DB_URL = "db.url";
@@ -27,7 +19,6 @@ public final class Configuracion {
     public static final String PUERTO = "servidor.puerto";
     public static final String DATOS_DEMO = "datos.demo";
 
-    /** Base embebida (H2 en modo compatible con PostgreSQL) para probar el sistema sin instalar nada. */
     public static final String URL_DEMO =
             "jdbc:h2:file:./datos-demo/rrhh;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH";
 

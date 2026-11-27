@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Funcionalidad común de las implementaciones JDBC de los DAO: ejecución de
- * sentencias con parámetros y conversión de tipos.
+ * Funcionalidad común de las implementaciones JDBC de los DAO: ejecución de sentencias con parámetros y
+ * conversión de tipos.
  */
 abstract class DAOBase {
 
@@ -56,7 +56,6 @@ abstract class DAOBase {
         }
     }
 
-    /** Ejecuta un INSERT y devuelve el identificador generado por la base. */
     protected int insertar(String sql, String columnaId, Object... parametros) {
         Connection conexion = ConexionBD.obtener();
         try (PreparedStatement ps = conexion.prepareStatement(sql, new String[] {columnaId})) {

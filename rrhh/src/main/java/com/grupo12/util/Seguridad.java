@@ -10,7 +10,6 @@ public final class Seguridad {
     private Seguridad() {
     }
 
-    /** Devuelve el hash SHA-256 (hexadecimal) del texto recibido. */
     public static String hash(String texto) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

@@ -1,0 +1,229 @@
+@startuml clases-control
+title Diagrama de Clases - Controladores y DTO
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor White
+  BorderColor #555555
+  ArrowColor #555555
+}
+hide empty members
+left to right direction
+
+package "gestores" {
+interface Gestor {
+  +dar_de_alta(datos: D): void
+  +modificar(datos: D): void
+  +dar_baja(id: int, consultor: Consultor): void
+}
+class ValidacionException {
+  -errores: List<String>
+  -campo: String
+}
+class Gestor_de_autenticacion {
+  +autenticar_consultor(nombre_usuario: String, contrasenia: String): Consultor
+  +autenticar_candidato(tipo_doc: Tipo_doc, nro_doc: String, clave: String): Candidato
+}
+class Gestor_de_pregunta {
+  +dar_de_alta(datos: DatosPreguntaDTO): void
+  +modificar(datos: DatosPreguntaDTO): void
+  +dar_baja(id_pregunta: int, consultor: Consultor): void
+  +buscar(nombre_competencia: String, nombre_factor: String, nombre_pregunta: String): List<PreguntaBusquedaDTO>
+  +obtener_datos(id_pregunta: int): DatosPreguntaDTO
+  +validar_campos_obligatorios(datos: DatosPreguntaDTO): List<String>
+  +validar_longitudes(datos: DatosPreguntaDTO): List<String>
+  +validar_ponderaciones(datos: DatosPreguntaDTO): List<String>
+}
+class Gestor_de_competencia {
+  +buscar(nombre_competencia: String): List<Competencia>
+}
+class Gestor_de_factor {
+  +obtener_por_competencia(id_competencia: int): List<Factor>
+}
+class Gestor_de_respuesta {
+  +buscar(nombre: String): List<Opcion_respuesta>
+  +obtener_detalles(id_opcion: int): List<Detalle_opcion>
+}
+class Gestor_de_puesto {
+  +buscar(codigo: Integer, nombre_puesto: String, nombre_empresa: String): List<PuestoSeleccionDTO>
+}
+class Gestor_de_candidato {
+  +buscar(apellido: String, nombre: String, num_candidato: Integer): List<CandidatoBusquedaDTO>
+}
+class Gestor_de_evaluacion {
+  +iniciar_evaluacion(consultor: Consultor): Evaluacion
+  +agregar_candidatos(evaluacion: Evaluacion, nros_candidato: List<Integer>): void
+  +quitar_candidatos(evaluacion: Evaluacion, nros_candidato: List<Integer>): void
+  +validar_candidatos_disponibles(candidatos: List<Candidato>): List<Candidato>
+  +seleccionar_puesto(evaluacion: Evaluacion, id_puesto: int): void
+  +validar_competencias_evaluables(puesto: Puesto): List<Competencia>
+  +obtener_competencias_requeridas(puesto: Puesto): List<CompetenciaRequeridaDTO>
+  +generar_evaluacion(evaluacion: Evaluacion): List<CandidatoConClaveDTO>
+  +obtener_candidatos_con_clave(evaluacion: Evaluacion): List<CandidatoConClaveDTO>
+  +guardar_evaluacion(evaluacion: Evaluacion): void
+  +exportar_claves_excel(evaluacion: Evaluacion): ArchivoDTO
+}
+class Gestor_de_cuestionario {
+  +obtener_cuestionario_activo(candidato: Candidato): Cuestionario
+  +registrar_ingreso(cuestionario: Cuestionario): String
+  +obtener_instrucciones(): String
+  +iniciar_cuestionario(cuestionario: Cuestionario): void
+  +seleccionar_preguntas(modelo: List<Factor>): List<Pregunta>
+  +obtener_bloque_actual(cuestionario: Cuestionario): List<PreguntaBloqueDTO>
+  +registrar_respuestas_bloque(cuestionario: Cuestionario, respuestas: Map<Integer, Integer>): List<Pregunta>
+  +finalizar(cuestionario: Cuestionario): void
+}
+class Gestor_de_orden_merito {
+  +generar(id_puesto: int, ids_evaluacion: List<Integer>, consultor: Consultor): List<OrdenMeritoCandidatoDTO>
+  +buscar_puestos(codigo: Integer, nombre_puesto: String, nombre_empresa: String): List<PuestoBusquedaDTO>
+  +obtener_evaluaciones(id_puesto: int): List<Evaluacion>
+}
+}
+package "dto" {
+class DatosPreguntaDTO {
+  -id_pregunta: int
+  -id_competencia: int
+  -id_factor: int
+  -nombre_competencia: String
+  -nombre_factor: String
+  -nombre: String
+  -pregunta: String
+  -descripcion: String
+  -id_opcion: int
+  -ponderaciones: Map<Integer, Double>
+}
+class PreguntaBusquedaDTO {
+  -id_pregunta: int
+  -nombre_competencia: String
+  -nombre_factor: String
+  -nombre_pregunta: String
+  -pregunta: String
+}
+class CandidatoBusquedaDTO {
+  -num_candidato: int
+  -apellido: String
+  -nombre: String
+  -tipo_doc: String
+  -nro_doc: String
+}
+class CandidatoConClaveDTO {
+  -apellido: String
+  -nombre: String
+  -tipo_doc: String
+  -nro_doc: String
+  -clave_ingreso: String
+}
+class PuestoSeleccionDTO {
+  -id_puesto: int
+  -nombre_puesto: String
+  -nombre_empresa: String
+}
+class CompetenciaRequeridaDTO {
+  -nombre_competencia: String
+  -ponderacion_requerida: double
+}
+class PreguntaBloqueDTO {
+  -id_respuesta: int
+  -numero: int
+  -enunciado: String
+  -id_detalle_elegido: Integer
+}
+class OpcionBloqueDTO {
+  -id_detalle: int
+  -descripcion: String
+}
+class PuestoBusquedaDTO {
+  -codigo: int
+  -nombre_puesto: String
+  -nombre_empresa: String
+  -cant_candidatos: int
+  -cant_evaluaciones_completas: int
+}
+class OrdenMeritoCandidatoDTO {
+  -posicion: Integer
+  -tipo_doc: String
+  -nro_doc: String
+  -apellido: String
+  -nombre: String
+  -puntaje_obtenido: Double
+  -estado_cuestionario: String
+  -fecha_inicio: LocalDateTime
+  -fecha_fin: LocalDateTime
+  -ultimo_ingreso: LocalDateTime
+  -cant_accesos: int
+}
+class ArchivoDTO {
+  -nombre_archivo: String
+  -contenido: byte[]
+}
+}
+package "persistencia" {
+interface ParametroDAO
+interface ConsultorDAO
+interface CandidatoDAO
+interface CompetenciaDAO
+interface FactorDAO
+interface PreguntaDAO
+interface OpcionRespuestaDAO
+interface PuestoDAO
+interface EvaluacionDAO
+interface CuestionarioDAO
+interface RespuestaDAO
+interface RegistroAuditoriaDAO
+interface OrdenMeritoDAO
+}
+
+' ---------------- Realización del contrato de ABM
+Gestor <|.. Gestor_de_pregunta : <<bind>> D = DatosPreguntaDTO
+
+' ---------------- Gestores -> DAO (interfaces)
+Gestor_de_autenticacion ..> ConsultorDAO
+Gestor_de_autenticacion ..> CandidatoDAO
+Gestor_de_autenticacion ..> CuestionarioDAO
+Gestor_de_pregunta ..> PreguntaDAO
+Gestor_de_pregunta ..> FactorDAO
+Gestor_de_pregunta ..> OpcionRespuestaDAO
+Gestor_de_pregunta ..> RegistroAuditoriaDAO
+Gestor_de_competencia ..> CompetenciaDAO
+Gestor_de_factor ..> FactorDAO
+Gestor_de_respuesta ..> OpcionRespuestaDAO
+Gestor_de_puesto ..> PuestoDAO
+Gestor_de_candidato ..> CandidatoDAO
+Gestor_de_evaluacion ..> EvaluacionDAO
+Gestor_de_evaluacion ..> CandidatoDAO
+Gestor_de_evaluacion ..> CuestionarioDAO
+Gestor_de_evaluacion ..> PuestoDAO
+Gestor_de_evaluacion ..> ParametroDAO
+Gestor_de_cuestionario ..> CuestionarioDAO
+Gestor_de_cuestionario ..> RespuestaDAO
+Gestor_de_cuestionario ..> PreguntaDAO
+Gestor_de_cuestionario ..> ParametroDAO
+Gestor_de_orden_merito ..> PuestoDAO
+Gestor_de_orden_merito ..> EvaluacionDAO
+Gestor_de_orden_merito ..> CuestionarioDAO
+Gestor_de_orden_merito ..> OrdenMeritoDAO
+
+' ---------------- Gestores -> DTO
+Gestor_de_pregunta ..> DatosPreguntaDTO
+Gestor_de_pregunta ..> PreguntaBusquedaDTO
+Gestor_de_candidato ..> CandidatoBusquedaDTO
+Gestor_de_puesto ..> PuestoSeleccionDTO
+Gestor_de_evaluacion ..> CandidatoConClaveDTO
+Gestor_de_evaluacion ..> CompetenciaRequeridaDTO
+Gestor_de_evaluacion ..> ArchivoDTO
+Gestor_de_cuestionario ..> PreguntaBloqueDTO
+Gestor_de_orden_merito ..> PuestoBusquedaDTO
+Gestor_de_orden_merito ..> OrdenMeritoCandidatoDTO
+PreguntaBloqueDTO "1" *-- "2..*" OpcionBloqueDTO
+
+note as N1
+  Los gestores (controladores de los casos de uso) trabajan
+  con las clases del dominio (ver Diagrama de Clases - Dominio)
+  y acceden a la base solo a través de las interfaces DAO,
+  que obtienen de FabricaDAO.
+end note
+@enduml

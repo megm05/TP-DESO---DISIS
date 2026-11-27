@@ -24,8 +24,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Controlador de la gestión de preguntas: CU020 (Gestionar Preguntas), CU021 (Dar
- * de alta Pregunta), CU022 (Modificar Pregunta) y CU023 (Dar de baja Pregunta).
+ * Controlador de la gestión de preguntas: CU020 (Gestionar Preguntas), CU021 (Dar de alta Pregunta), CU022
+ * (Modificar Pregunta) y CU023 (Dar de baja Pregunta).
  */
 public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
 
@@ -53,14 +53,6 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
         this.registroAuditoriaDAO = registroAuditoriaDAO;
     }
 
-    // ------------------------------------------------------------------
-    //  CU020 - Gestionar Preguntas
-    // ------------------------------------------------------------------
-
-    /**
-     * Preguntas que coinciden con los criterios de búsqueda (el criterio es
-     * "contiene"). El actor debe ingresar datos en al menos uno de los criterios.
-     */
     public List<PreguntaBusquedaDTO> buscar(String nombre_competencia, String nombre_factor,
             String nombre_pregunta) {
         if (Texto.estaVacio(nombre_competencia) && Texto.estaVacio(nombre_factor)
@@ -77,16 +69,6 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
         return resultado;
     }
 
-    // ------------------------------------------------------------------
-    //  CU021 - Dar de alta Pregunta
-    // ------------------------------------------------------------------
-
-    /**
-     * Registra una nueva pregunta.
-     *
-     * @throws ValidacionException con TODAS las omisiones (2.A), los campos que exceden su
-     *                             longitud máxima (2.B) o el aviso de pregunta existente (2.C)
-     */
     @Override
     public void dar_de_alta(DatosPreguntaDTO datos) {
         normalizar(datos);
@@ -114,11 +96,6 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
         });
     }
 
-    // ------------------------------------------------------------------
-    //  CU022 - Modificar Pregunta
-    // ------------------------------------------------------------------
-
-    /** Datos de una pregunta existente, para presentarlos en pantalla. */
     public DatosPreguntaDTO obtener_datos(int id_pregunta) {
         Pregunta pregunta = obtenerVigente(id_pregunta);
         DatosPreguntaDTO datos = new DatosPreguntaDTO();
@@ -137,11 +114,6 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
         return datos;
     }
 
-    /**
-     * Actualiza los datos de una pregunta. La competencia y el factor son de solo lectura.
-     *
-     * @throws ValidacionException con los mismos avisos que el alta
-     */
     @Override
     public void modificar(DatosPreguntaDTO datos) {
         normalizar(datos);
@@ -166,14 +138,6 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
         });
     }
 
-    // ------------------------------------------------------------------
-    //  CU023 - Dar de baja Pregunta
-    // ------------------------------------------------------------------
-
-    /**
-     * Elimina lógicamente la pregunta y genera el registro de auditoría con el
-     * usuario que la eliminó y la fecha y hora de la eliminación.
-     */
     @Override
     public void dar_baja(int id_pregunta, Consultor consultor) {
         Transaccion.realizar(() -> {
@@ -184,10 +148,6 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
             registroAuditoriaDAO.guardar(registro);
         });
     }
-
-    // ------------------------------------------------------------------
-    //  Validaciones
-    // ------------------------------------------------------------------
 
     /** Flujo 2.A: detalla TODOS los datos obligatorios que no fueron ingresados. */
     public List<String> validar_campos_obligatorios(DatosPreguntaDTO datos) {
@@ -227,8 +187,8 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
     }
 
     /**
-     * Las ponderaciones de las opciones de respuesta deben sumar 10 puntos y ser
-     * siempre 0 o positivas (CU021, observaciones).
+     * Las ponderaciones de las opciones de respuesta deben sumar 10 puntos y ser siempre 0 o positivas
+     * (CU021, observaciones).
      */
     public List<String> validar_ponderaciones(DatosPreguntaDTO datos) {
         List<String> errores = new ArrayList<>();
@@ -256,8 +216,8 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
     }
 
     /**
-     * Flujo 2.C: la validación de existencia se realiza tanto sobre el nombre de la
-     * pregunta como sobre la pregunta en cuestión, aclarando cuál no fue superada.
+     * Flujo 2.C: la validación de existencia se realiza tanto sobre el nombre de la pregunta como sobre la
+     * pregunta en cuestión, aclarando cuál no fue superada.
      */
     private void validarExistencia(DatosPreguntaDTO datos, Factor factor, int id_excluida) {
         Competencia competencia = factor.getCompetencia();
@@ -274,10 +234,6 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
             throw new ValidacionException(errores, "nombre");
         }
     }
-
-    // ------------------------------------------------------------------
-    //  Colaboraciones internas
-    // ------------------------------------------------------------------
 
     private Pregunta obtenerVigente(int id_pregunta) {
         Pregunta pregunta = preguntaDAO.obtener_por_id(id_pregunta);
@@ -306,7 +262,6 @@ public class Gestor_de_pregunta implements Gestor<DatosPreguntaDTO> {
         return opcion;
     }
 
-    /** Vuelca en la pregunta los datos ingresados en pantalla. */
     private static void completar(Pregunta pregunta, DatosPreguntaDTO datos, Opcion_respuesta opcion) {
         pregunta.setNombre(datos.getNombre());
         pregunta.setPregunta(datos.getPregunta());

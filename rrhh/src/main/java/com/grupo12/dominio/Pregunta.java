@@ -3,10 +3,7 @@ package com.grupo12.dominio;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Pregunta cerrada de elección única asociada a un factor. Usa una opción de
- * respuesta (conjunto de opciones) y define la ponderación de cada opción.
- */
+/** Pregunta cerrada de elección única asociada a un factor. */
 public class Pregunta {
 
     private int id_pregunta;
@@ -18,7 +15,6 @@ public class Pregunta {
     private Opcion_respuesta opcion_respuesta;
     private List<Ponderacion_opcion> ponderaciones = new ArrayList<>();
 
-    /** Indica si la pregunta está vigente (no fue dada de baja). */
     public boolean disponibilidad() {
         return activo;
     }
@@ -28,11 +24,6 @@ public class Pregunta {
         this.activo = false;
     }
 
-    /**
-     * Ponderación que esta pregunta asigna a una de las opciones de su opción de respuesta.
-     *
-     * @return la ponderación definida, o 0 si la opción no pertenece a la pregunta
-     */
     public double obtener_ponderacion(Detalle_opcion detalle) {
         if (detalle == null) {
             return 0;

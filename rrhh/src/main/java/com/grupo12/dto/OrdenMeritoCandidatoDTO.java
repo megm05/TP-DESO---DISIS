@@ -2,10 +2,7 @@ package com.grupo12.dto;
 
 import java.time.LocalDateTime;
 
-/**
- * Renglón del reporte de orden de mérito (CU028 paso 7). Combina datos del
- * candidato, de su cuestionario y el puntaje calculado.
- */
+/** Renglón del reporte de orden de mérito (CU028 paso 7). */
 public class OrdenMeritoCandidatoDTO {
 
     private final Integer posicion;

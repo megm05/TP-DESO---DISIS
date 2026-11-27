@@ -13,9 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Crea el esquema y carga los datos iniciales la primera vez que se ejecuta el
- * sistema contra una base vacía. Los scripts son los mismos que se entregan en
- * la carpeta bd del proyecto (schema.sql y datos_iniciales.sql).
+ * Crea el esquema y carga los datos iniciales la primera vez que se ejecuta el sistema contra una base vacía.
  */
 public final class InicializadorBD {
 
@@ -31,7 +29,6 @@ public final class InicializadorBD {
     private InicializadorBD() {
     }
 
-    /** Indica si las tablas del sistema ya existen en la base. */
     public static boolean esquemaCreado() {
         String sql = "SELECT COUNT(*) FROM information_schema.tables WHERE LOWER(table_name) = 'parametro'";
         try (Statement st = ConexionBD.obtener().createStatement(); ResultSet rs = st.executeQuery(sql)) {
@@ -50,7 +47,6 @@ public final class InicializadorBD {
         ejecutarScript("/bd/datos_iniciales.sql");
     }
 
-    /** Elimina todas las tablas del sistema (para volver a empezar con la base en cero). */
     public static void eliminarEsquema() {
         try (Statement st = ConexionBD.obtener().createStatement()) {
             for (String tabla : TABLAS) {

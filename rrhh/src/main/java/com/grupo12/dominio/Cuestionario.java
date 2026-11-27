@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Cuestionario generado para un candidato dentro de una evaluación (CU025) y que
- * el candidato completa por bloques (CU026).
+ * Cuestionario generado para un candidato dentro de una evaluación (CU025) y que el candidato completa por
+ * bloques (CU026).
  */
 public class Cuestionario {
 
@@ -31,16 +31,11 @@ public class Cuestionario {
     private LocalDateTime ultimo_ingreso;
     private LocalDateTime fecha_cambio_estado;
     private int cant_accesos;
-    /** Horas máximas para completar el cuestionario desde el primer ingreso. */
     private float tiempoMax;
     private Candidato candidato;
     private Evaluacion evaluacion;
     private List<BloquePregunta> bloques = new ArrayList<>();
     private List<Resultado_competencia> resultados = new ArrayList<>();
-
-    // ------------------------------------------------------------------
-    //  Clave de ingreso
-    // ------------------------------------------------------------------
 
     /** Genera una clave aleatoria de 8 caracteres que contiene letras y dígitos. */
     public void generar_clave() {
@@ -70,10 +65,6 @@ public class Cuestionario {
         return clave != null && clave_cuestionario != null
                 && clave_cuestionario.equalsIgnoreCase(clave.trim());
     }
-
-    // ------------------------------------------------------------------
-    //  Estados
-    // ------------------------------------------------------------------
 
     /** Deja el cuestionario en estado ACTIVO (CU025: se crean en estado "activo"). */
     public void activar() {
@@ -107,7 +98,6 @@ public class Cuestionario {
         this.fecha_cambio_estado = LocalDateTime.now();
     }
 
-    /** Descripción de la situación del cuestionario, para informar al candidato. */
     public String disponibilidad() {
         if (estado_cuestionario == null) {
             return "El cuestionario todavía no fue generado.";
@@ -128,13 +118,9 @@ public class Cuestionario {
         }
     }
 
-    // ------------------------------------------------------------------
-    //  Controles de ingreso (CU026, precondiciones y flujos 1.A y 1.B)
-    // ------------------------------------------------------------------
-
     /**
-     * Tiempo máximo para completar (CU026 observación 2): fecha y hora actual menos
-     * la del primer ingreso; si supera el tiempo máximo del cuestionario, venció.
+     * Tiempo máximo para completar (CU026 observación 2): fecha y hora actual menos la del primer ingreso; si
+     * supera el tiempo máximo del cuestionario, venció.
      */
     public boolean vencio_plazo_completado() {
         if (estado_cuestionario != Estado.EN_PROCESO || fecha_ini == null) {
@@ -143,11 +129,6 @@ public class Cuestionario {
         return horasDesde(fecha_ini) > tiempoMax;
     }
 
-    /**
-     * Tiempo máximo permitido para el estado activo.
-     *
-     * @param horas_max_activo parámetro del repositorio de configuraciones
-     */
     public boolean vencio_plazo_activacion(double horas_max_activo) {
         if (estado_cuestionario != Estado.ACTIVO || fecha_cambio_estado == null) {
             return false;
@@ -155,12 +136,10 @@ public class Cuestionario {
         return horasDesde(fecha_cambio_estado) > horas_max_activo;
     }
 
-    /** Indica si ya se utilizaron todos los accesos permitidos. */
     public boolean supero_max_accesos(int max) {
         return cant_accesos >= max;
     }
 
-    /** Cuenta un nuevo acceso del candidato al cuestionario. */
     public void registrar_ingreso() {
         cant_accesos++;
         ultimo_ingreso = LocalDateTime.now();
@@ -170,17 +149,10 @@ public class Cuestionario {
         return Duration.between(desde, LocalDateTime.now()).toMillis() / 3_600_000.0;
     }
 
-    // ------------------------------------------------------------------
-    //  Armado y respuesta (CU026 pasos 3 a 7)
-    // ------------------------------------------------------------------
-
     /**
-     * Asocia al cuestionario las preguntas sorteadas: las mezcla (preguntas de los
-     * distintos factores y competencias) y las agrupa en bloques, creando una
-     * respuesta vacía por cada pregunta (CU026 observación 1).
-     *
-     * @param preguntas       preguntas elegidas al azar (2 por factor)
-     * @param cant_por_bloque parámetro de cantidad de preguntas por cada paso
+     * Asocia al cuestionario las preguntas sorteadas: las mezcla (preguntas de los distintos factores y
+     * competencias) y las agrupa en bloques, creando una respuesta vacía por cada pregunta (CU026 observación
+     * 1).
      */
     public void armar_cuestionario(List<Pregunta> preguntas, int cant_por_bloque) {
         List<Pregunta> mezcladas = new ArrayList<>(preguntas);
@@ -212,10 +184,6 @@ public class Cuestionario {
         }
         return null;
     }
-
-    // ------------------------------------------------------------------
-    //  Resultados (CU026 observación 3)
-    // ------------------------------------------------------------------
 
     /**
      * Algoritmo para el cálculo del puntaje de los factores y competencias:
@@ -264,12 +232,7 @@ public class Cuestionario {
         return resultados;
     }
 
-    /**
-     * Puntaje obtenido por el candidato, usado para ordenar el orden de mérito
-     * (CU028). El enunciado no define un puntaje global: se toma el promedio de los
-     * totales de las competencias evaluadas, que queda en la misma escala de 0 a 10
-     * que las ponderaciones. Para candidatos de un mismo puesto ordena igual que la suma.
-     */
+    /** Puntaje obtenido por el candidato, usado para ordenar el orden de mérito (CU028). */
     public double obtener_puntaje_obtenido() {
         if (resultados.isEmpty()) {
             return 0;
@@ -282,8 +245,8 @@ public class Cuestionario {
     }
 
     /**
-     * Indica si el candidato alcanzó las ponderaciones mínimas definidas para cada
-     * competencia en el puesto (CU028 paso 7).
+     * Indica si el candidato alcanzó las ponderaciones mínimas definidas para cada competencia en el puesto
+     * (CU028 paso 7).
      */
     public boolean alcanza_ponderaciones_minimas(Puesto puesto) {
         for (Caracteristicas_del_puesto caracteristica : puesto.getCaracteristicas()) {
@@ -304,10 +267,6 @@ public class Cuestionario {
     private static double redondear(double valor) {
         return Math.round(valor * 100.0) / 100.0;
     }
-
-    // ------------------------------------------------------------------
-    //  Getters y setters
-    // ------------------------------------------------------------------
 
     public int getId_cuestionario() {
         return id_cuestionario;

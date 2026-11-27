@@ -1,0 +1,242 @@
+@startuml clases-dominio
+title Diagrama de Clases - Dominio
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor White
+  BorderColor #555555
+  ArrowColor #555555
+}
+hide empty members
+
+enum Estado {
+  ACTIVO
+  EN_PROCESO
+  COMPLETO
+  INCOMPLETO
+  SIN_CONTESTAR
+}
+enum Tipo_doc {
+  DNI
+  LE
+  LC
+  PP
+}
+interface Auditoria {
+  +Borrar_Con_Registro(instancia: Object, FechaYHora: LocalDateTime, usuario: Consultor): void
+}
+abstract class Usuario {
+  -nombre_usuario: String
+  -contrasenia: String
+  +autenticar(contrasenia_ingresada: String): boolean
+}
+class Consultor {
+  -id_consultor: int
+  -nombre: String
+  -apellido: String
+}
+class Candidato {
+  -id_candidato: int
+  -num_candidato: int
+  -nombre: String
+  -apellido: String
+  -tipo_doc: Tipo_doc
+  -nro_doc: String
+  -email: String
+  -genero: char
+  -fecha_nac: LocalDate
+  -escolaridad: String
+}
+class Empresa {
+  -id_empresa: int
+  -nombre: String
+}
+class Puesto {
+  -id_puesto: int
+  -nombre: String
+  -descripcion: String
+  +obtener_competencias(): List<Competencia>
+  +evaluables(): boolean
+  +obtener_ponderacion_minima(competencia: Competencia): double
+}
+class Caracteristicas_del_puesto {
+  -ponderacion: double
+  +cumple_ponderacion(puntaje: double): boolean
+}
+class Competencia {
+  -id_competencia: int
+  -nombre: String
+  -tipo: String
+  +factores_evaluables(): boolean
+  +obtener_factores(): List<Factor>
+}
+class Factor {
+  -id_factor: int
+  -nombre: String
+  -descripcion: String
+  +preguntas_suficientes(): boolean
+}
+class Pregunta {
+  -id_pregunta: int
+  -nombre: String
+  -pregunta: String
+  -descripcion: String
+  -activo: boolean
+  +desactivar(): void
+  +obtener_ponderacion(detalle: Detalle_opcion): double
+  +disponibilidad(): boolean
+}
+class Opcion_respuesta {
+  -id_opcion: int
+  -nombre: String
+  -descripcion: String
+  +obtener_detalles(): List<Detalle_opcion>
+}
+class Detalle_opcion {
+  -id_detalle: int
+  -orden: int
+  -descripcion: String
+}
+class Ponderacion_opcion {
+  -ponderacion: double
+}
+class Evaluacion {
+  -id_evaluacion: int
+  -fecha_generacion: LocalDate
+  -estado: String
+  +agregar_candidato(candidato: Candidato): void
+  +quitar_candidato(candidato: Candidato): void
+  +seleccionar_puesto(puesto: Puesto): void
+  +generar_cuestionarios(tiempo_max: float): List<Cuestionario>
+}
+class Cuestionario {
+  -id_cuestionario: int
+  -estado_cuestionario: Estado
+  -clave_cuestionario: String
+  -fecha_ini: LocalDateTime
+  -fecha_fin: LocalDateTime
+  -ultimo_ingreso: LocalDateTime
+  -fecha_cambio_estado: LocalDateTime
+  -cant_accesos: int
+  -tiempoMax: float
+  +disponibilidad(): String
+  +validar_clave(clave: String): boolean
+  +marcar_en_proceso(): void
+  +marcar_completo(): void
+  +marcar_incompleto(): void
+  +marcar_sin_contestar(): void
+  +vencio_plazo_completado(): boolean
+  +vencio_plazo_activacion(horas_max_activo: double): boolean
+  +supero_max_accesos(max: int): boolean
+  +registrar_ingreso(): void
+  +armar_cuestionario(preguntas: List<Pregunta>, cant_por_bloque: int): void
+  +obtener_bloque_no_respondido(): BloquePregunta
+  +calcular_puntaje(): void
+  +obtener_resultados_competencia(): List<Resultado_competencia>
+  +obtener_puntaje_obtenido(): double
+  +alcanza_ponderaciones_minimas(puesto: Puesto): boolean
+  +generar_clave(): void
+  +activar(): void
+}
+class BloquePregunta {
+  -id_bloque: int
+  -numero: int
+  -completado: boolean
+  +obtener_respuestas(): List<Respuesta>
+  +completar(): void
+  +esta_completo(): boolean
+}
+class Respuesta {
+  -id_respuesta: int
+  -orden: int
+  -fecha: LocalDateTime
+  +obtener_ponderacion(): double
+  +registrar(detalle: Detalle_opcion): void
+}
+class Resultado_competencia {
+  -total: double
+}
+class Resultado_factor {
+  -total: double
+}
+class Parametro {
+  -clave: String
+  -valor: String
+  -descripcion: String
+}
+class OrdenMerito {
+  -id_orden_merito: int
+  -fecha_generacion: LocalDate
+  +agregar_renglon(candidato: Candidato, cuestionario: Cuestionario, puntaje: Double): void
+  +generar(): void
+}
+class Renglon_Orden_Merito {
+  -nro_renglon: int
+  -posicion: Integer
+  -puntaje_obtenido: Double
+}
+class Registro_pregunta {
+  -id_registro: int
+  -nombre_borrado: String
+  -fecha_hora: LocalDateTime
+  +Borrar_Con_Registro(instancia: Object, FechaYHora: LocalDateTime, usuario: Consultor): void
+}
+
+' ---------------- Herencia y realización
+Usuario <|-- Consultor
+Usuario <|-- Candidato
+Auditoria <|.. Registro_pregunta
+
+' ---------------- Puestos y competencias
+Puesto "0..*" --> "1" Empresa
+Puesto "0..*" -- "1..*" Competencia
+(Puesto, Competencia) .. Caracteristicas_del_puesto
+Competencia "1" *-- "1..*" Factor
+Factor "1" *-- "0..*" Pregunta
+Pregunta "0..*" --> "1" Opcion_respuesta
+Opcion_respuesta "1" *-- "2..*" Detalle_opcion
+Pregunta "0..*" -- "2..*" Detalle_opcion
+(Pregunta, Detalle_opcion) .. Ponderacion_opcion
+
+' ---------------- Evaluación y cuestionarios
+Evaluacion "0..*" --> "1" Puesto
+Evaluacion "0..*" --> "1" Consultor
+Evaluacion "0..*" --> "1..*" Candidato : candidatos a evaluar
+Evaluacion "1" *-- "1..*" Cuestionario
+Cuestionario "0..*" --> "1" Candidato
+Cuestionario "1" *-- "0..*" BloquePregunta
+BloquePregunta "1" *-- "1..*" Respuesta
+Respuesta "0..*" --> "1" Pregunta
+Respuesta "0..*" --> "0..1" Detalle_opcion : opción elegida
+Respuesta "0..*" --> "1" Candidato
+Cuestionario "1" *-- "0..*" Resultado_competencia
+Resultado_competencia "1" *-- "1..*" Resultado_factor
+Resultado_competencia "0..*" --> "1" Competencia
+Resultado_factor "0..*" --> "1" Factor
+Cuestionario ..> Estado
+Candidato ..> Tipo_doc
+
+' ---------------- Orden de mérito y auditoría
+OrdenMerito "0..*" --> "1" Puesto
+OrdenMerito "0..*" --> "1" Consultor
+OrdenMerito "0..*" --> "1..*" Evaluacion
+OrdenMerito "1" *-- "0..*" Renglon_Orden_Merito
+Renglon_Orden_Merito "0..*" --> "1" Candidato
+Renglon_Orden_Merito "0..*" --> "1" Cuestionario
+Registro_pregunta "0..*" --> "1" Consultor
+Registro_pregunta ..> Pregunta
+
+note as N1
+  Clases del dominio implementadas (paquete com.grupo12.dominio).
+  Atributos y métodos generados desde el código; se omiten
+  getters y setters. Las clases del diseño que corresponden a
+  casos de uso fuera de la implementación (RepComp,
+  Registro_factor, Registro_competencia, Registro_puesto,
+  Registro_opcion_respuesta, RegistroEjecucion) se mantienen
+  en el DER y en la documentación.
+end note
+@enduml

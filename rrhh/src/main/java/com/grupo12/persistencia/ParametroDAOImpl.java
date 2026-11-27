@@ -2,7 +2,7 @@ package com.grupo12.persistencia;
 
 import com.grupo12.dominio.Parametro;
 
-/** Implementación JDBC (PostgreSQL) de {@link ParametroDAO}. */
+/** Implementación JDBC (PostgreSQL) de ParametroDAO. */
 public class ParametroDAOImpl extends DAOBase implements ParametroDAO {
 
     @Override

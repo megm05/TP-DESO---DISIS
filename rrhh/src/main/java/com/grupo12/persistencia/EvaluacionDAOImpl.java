@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Implementación JDBC (PostgreSQL) de {@link EvaluacionDAO}. */
+/** Implementación JDBC (PostgreSQL) de EvaluacionDAO. */
 public class EvaluacionDAOImpl extends DAOBase implements EvaluacionDAO {
 
     private static final String SELECT = "SELECT e.id_evaluacion, e.id_puesto, e.fecha_generacion, e.estado,"
@@ -53,7 +53,6 @@ public class EvaluacionDAOImpl extends DAOBase implements EvaluacionDAO {
         return evaluaciones;
     }
 
-    /** Evaluación con su consultor y su puesto, sin cargar los cuestionarios. */
     Evaluacion obtenerCabecera(int id) {
         Map<Integer, Integer> puestoPorEvaluacion = new HashMap<>();
         Evaluacion evaluacion = consultarUno(SELECT + " WHERE e.id_evaluacion = ?", rs -> {

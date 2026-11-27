@@ -24,14 +24,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Controlador del CU025 - Evaluar a Candidatos. La evaluación se va armando paso a
- * paso (candidatos a evaluar, función o puesto) y recién se guarda cuando el actor
- * presiona "Finalizar".
- */
+/** Controlador del CU025 - Evaluar a Candidatos. */
 public class Gestor_de_evaluacion {
 
-    /** Tiempo máximo para completar el cuestionario si el parámetro no está configurado (horas). */
     private static final float TIEMPO_MAX_POR_DEFECTO = 72f;
 
     private final EvaluacionDAO evaluacionDAO;
@@ -61,15 +56,7 @@ public class Gestor_de_evaluacion {
         return evaluacion;
     }
 
-    // ------------------------------------------------------------------
-    //  Selección de candidatos (pasos 4 a 6)
-    // ------------------------------------------------------------------
-
-    /**
-     * Agrega los candidatos seleccionados a la grilla "Candidatos a evaluar".
-     *
-     * @throws ValidacionException flujo 4.A: no se han seleccionado candidatos
-     */
+    /** Agrega los candidatos seleccionados a la grilla "Candidatos a evaluar". */
     public void agregar_candidatos(Evaluacion evaluacion, List<Integer> nros_candidato) {
         if (nros_candidato == null || nros_candidato.isEmpty()) {
             throw new ValidacionException("Debe seleccionar uno o más candidatos.");
@@ -97,12 +84,7 @@ public class Gestor_de_evaluacion {
         evaluacion.setCuestionarios(new ArrayList<>());
     }
 
-    /**
-     * Flujo 6.A: un candidato con un cuestionario activo o en proceso no puede ser
-     * evaluado nuevamente.
-     *
-     * @return los candidatos que NO están disponibles (lista vacía si todos lo están)
-     */
+    /** Flujo 6.A: un candidato con un cuestionario activo o en proceso no puede ser evaluado nuevamente. */
     public List<Candidato> validar_candidatos_disponibles(List<Candidato> candidatos) {
         List<Candidato> noDisponibles = new ArrayList<>();
         for (Candidato candidato : candidatos) {
@@ -112,10 +94,6 @@ public class Gestor_de_evaluacion {
         }
         return noDisponibles;
     }
-
-    // ------------------------------------------------------------------
-    //  Selección de la función o puesto (pasos 8 a 10)
-    // ------------------------------------------------------------------
 
     /** Asigna a la evaluación la función o puesto elegido por el actor (paso 8). */
     public void seleccionar_puesto(Evaluacion evaluacion, int id_puesto) {
@@ -128,10 +106,7 @@ public class Gestor_de_evaluacion {
     }
 
     /**
-     * Flujo 9.A: competencias de la función que NO poseen al menos un factor en
-     * condiciones de ser evaluado.
-     *
-     * @return las competencias que no pueden ser evaluadas (lista vacía si todas pueden)
+     * Flujo 9.A: competencias de la función que NO poseen al menos un factor en condiciones de ser evaluado.
      */
     public List<Competencia> validar_competencias_evaluables(Puesto puesto) {
         List<Competencia> noEvaluables = new ArrayList<>();
@@ -153,16 +128,9 @@ public class Gestor_de_evaluacion {
         return requeridas;
     }
 
-    // ------------------------------------------------------------------
-    //  Generación, guardado y exportación (pasos 11 a 17)
-    // ------------------------------------------------------------------
-
     /**
-     * Paso 11: genera, todavía en memoria, un cuestionario en estado ACTIVO con su
-     * clave de ingreso para cada candidato a evaluar.
-     *
-     * @return la lista de candidatos a evaluar con su clave de ingreso
-     * @throws ValidacionException flujo 10.A (no se seleccionó una función) y revalidación de 6.A y 9.A
+     * Paso 11: genera, todavía en memoria, un cuestionario en estado ACTIVO con su clave de ingreso para cada
+     * candidato a evaluar.
      */
     public List<CandidatoConClaveDTO> generar_evaluacion(Evaluacion evaluacion) {
         if (evaluacion.getCandidatos().isEmpty()) {
@@ -198,10 +166,7 @@ public class Gestor_de_evaluacion {
         return lista;
     }
 
-    /**
-     * Paso 13: guarda la evaluación con los cuestionarios en estado "activo" de cada
-     * candidato. Si la evaluación ya fue guardada no vuelve a registrarla.
-     */
+    /** Paso 13: guarda la evaluación con los cuestionarios en estado "activo" de cada candidato. */
     public void guardar_evaluacion(Evaluacion evaluacion) {
         if (evaluacion.getId_evaluacion() != 0) {
             return;
@@ -235,10 +200,7 @@ public class Gestor_de_evaluacion {
         }
     }
 
-    /**
-     * Pasos 14 a 17: lista de candidatos con sus claves en un archivo Excel. El
-     * nombre del archivo se conforma como aaaa-mm-dd-hh-mm-NombreFunción.
-     */
+    /** Pasos 14 a 17: lista de candidatos con sus claves en un archivo Excel. */
     public ArchivoDTO exportar_claves_excel(Evaluacion evaluacion) {
         if (evaluacion.getId_evaluacion() == 0) {
             throw new ValidacionException("Debe finalizar la evaluación antes de exportar las claves.");

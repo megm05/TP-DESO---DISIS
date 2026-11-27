@@ -8,11 +8,7 @@ import com.grupo12.util.Texto;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Gestor de opciones de respuesta. En esta entrega solo se implementan las
- * consultas que usa el alta de preguntas (CU021); el ABM de opciones de
- * respuesta (CU024 y CU029 a CU031) queda fuera del alcance de la implementación.
- */
+/** Gestor de opciones de respuesta. */
 public class Gestor_de_respuesta {
 
     private final OpcionRespuestaDAO opcionRespuestaDAO;
@@ -25,7 +21,6 @@ public class Gestor_de_respuesta {
         this.opcionRespuestaDAO = opcionRespuestaDAO;
     }
 
-    /** Opciones de respuesta cuyo nombre contiene el texto; todas si no se indica ninguno. */
     public List<Opcion_respuesta> buscar(String nombre) {
         List<Opcion_respuesta> todas = opcionRespuestaDAO.obtener_todos();
         if (Texto.estaVacio(nombre)) {
@@ -42,8 +37,8 @@ public class Gestor_de_respuesta {
     }
 
     /**
-     * Lista de opciones (orden y descripción) de una opción de respuesta, ordenada
-     * por orden, para la grilla donde se ingresan las ponderaciones (CU021).
+     * Lista de opciones (orden y descripción) de una opción de respuesta, ordenada por orden, para la grilla
+     * donde se ingresan las ponderaciones (CU021).
      */
     public List<Detalle_opcion> obtener_detalles(int id_opcion) {
         Opcion_respuesta opcion = opcionRespuestaDAO.obtener_por_id(id_opcion);

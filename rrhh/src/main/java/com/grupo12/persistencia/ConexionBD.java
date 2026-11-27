@@ -5,11 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Administra la conexión a la base de datos. Cada hilo (cada pedido que atiende
- * el servidor) trabaja con su propia conexión, que se abre al primer uso y se
- * cierra al terminar de atender el pedido.
- */
+/** Administra la conexión a la base de datos. */
 public final class ConexionBD {
 
     private static final ThreadLocal<Connection> ACTUAL = new ThreadLocal<>();
@@ -17,7 +13,6 @@ public final class ConexionBD {
     private ConexionBD() {
     }
 
-    /** Conexión del hilo actual; la abre si todavía no existe. */
     public static Connection obtener() {
         try {
             Connection conexion = ACTUAL.get();
@@ -35,7 +30,6 @@ public final class ConexionBD {
         }
     }
 
-    /** Cierra la conexión del hilo actual (si hay una abierta). */
     public static void cerrar() {
         Connection conexion = ACTUAL.get();
         ACTUAL.remove();

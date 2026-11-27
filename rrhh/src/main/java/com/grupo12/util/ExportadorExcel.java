@@ -8,21 +8,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Genera planillas Excel (formato .xlsx) sin librerías externas: un libro con
- * una hoja, una fila de título, una fila de encabezados y las filas de datos.
+ * Genera planillas Excel (formato .xlsx) sin librerías externas: un libro con una hoja, una fila de título,
+ * una fila de encabezados y las filas de datos.
  */
 public final class ExportadorExcel {
 
     private ExportadorExcel() {
     }
 
-    /**
-     * @param nombreHoja  nombre de la hoja
-     * @param titulo      texto de la primera fila
-     * @param encabezados nombres de las columnas
-     * @param filas       datos; cada fila con un valor por columna
-     * @return el contenido del archivo .xlsx
-     */
     public static byte[] generar(String nombreHoja, String titulo, String[] encabezados, List<String[]> filas) {
         try (ByteArrayOutputStream salida = new ByteArrayOutputStream()) {
             try (ZipOutputStream zip = new ZipOutputStream(salida)) {
@@ -84,7 +77,6 @@ public final class ExportadorExcel {
                 + "</Relationships>";
     }
 
-    /** Estilo 0: normal. Estilo 1: negrita (título y encabezados). */
     private static String estilos() {
         return XML + "<styleSheet xmlns=\"" + NS + "\">"
                 + "<fonts count=\"2\">"

@@ -1,0 +1,116 @@
+@startuml clases-persistencia
+title Diagrama de Clases - Persistencia (DAO)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor White
+  BorderColor #555555
+  ArrowColor #555555
+}
+hide empty members
+left to right direction
+interface ParametroDAO {
+  +obtener_por_clave(clave: String): Parametro
+}
+interface ConsultorDAO {
+  +obtener_por_id(id: int): Consultor
+  +obtener_por_nombre_usuario(nombre_usuario: String): Consultor
+}
+interface CandidatoDAO {
+  +obtener_por_id(id: int): Candidato
+  +obtener_por_numero(num_candidato: int): Candidato
+  +obtener_por_documento(tipo_doc: Tipo_doc, nro_doc: String): Candidato
+  +buscar_por_filtros(apellido: String, nombre: String, num_candidato: Integer): List<Candidato>
+}
+interface CompetenciaDAO {
+  +obtener_por_id(id: int): Competencia
+  +buscar_por_nombre(nombre: String): List<Competencia>
+}
+interface FactorDAO {
+  +obtener_por_id(id: int): Factor
+  +obtener_por_competencia(id_competencia: int): List<Factor>
+}
+interface PreguntaDAO {
+  +obtener_por_id(id: int): Pregunta
+  +buscar_por_filtros(nombre_competencia: String, nombre_factor: String, nombre_pregunta: String): List<Pregunta>
+  +existe_pregunta(nombre: String, pregunta: String, competencia: Competencia, factor: Factor, id_excluida: int): boolean
+  +guardar(pregunta: Pregunta): void
+  +actualizar(pregunta: Pregunta): void
+  +obtener_activas_por_factor(factor: Factor): List<Pregunta>
+}
+interface OpcionRespuestaDAO {
+  +obtener_por_id(id: int): Opcion_respuesta
+  +obtener_todos(): List<Opcion_respuesta>
+}
+interface PuestoDAO {
+  +obtener_por_id(id: int): Puesto
+  +buscar_por_filtros(codigo: Integer, nombre: String, empresa: String): List<Puesto>
+}
+interface EvaluacionDAO {
+  +obtener_por_id(id: int): Evaluacion
+  +guardar(evaluacion: Evaluacion): void
+  +obtener_por_puesto(puesto: Puesto): List<Evaluacion>
+}
+interface CuestionarioDAO {
+  +obtener_por_id(id: int): Cuestionario
+  +guardar(cuestionario: Cuestionario): void
+  +actualizar(cuestionario: Cuestionario): void
+  +obtener_activo_por_candidato(candidato: Candidato): Cuestionario
+  +obtener_por_evaluaciones(evaluaciones: List<Evaluacion>): List<Cuestionario>
+  +contar_por_puesto(puesto: Puesto): int
+  +contar_completos_por_puesto(puesto: Puesto): int
+}
+interface RespuestaDAO {
+  +actualizar(respuesta: Respuesta): void
+}
+interface RegistroAuditoriaDAO {
+  +guardar(registro: Auditoria): void
+}
+interface OrdenMeritoDAO {
+  +guardar(ordenMerito: OrdenMerito): void
+}
+class ParametroDAOImpl
+class ConsultorDAOImpl
+class CandidatoDAOImpl
+class CompetenciaDAOImpl
+class FactorDAOImpl
+class PreguntaDAOImpl
+class OpcionRespuestaDAOImpl
+class PuestoDAOImpl
+class EvaluacionDAOImpl
+class CuestionarioDAOImpl
+class RespuestaDAOImpl
+class RegistroAuditoriaDAOImpl
+class OrdenMeritoDAOImpl
+class FabricaDAO {
+}
+class ConexionBD {
+}
+class Transaccion {
+}
+class InicializadorBD {
+}
+ParametroDAO <|.. ParametroDAOImpl
+ConsultorDAO <|.. ConsultorDAOImpl
+CandidatoDAO <|.. CandidatoDAOImpl
+CompetenciaDAO <|.. CompetenciaDAOImpl
+FactorDAO <|.. FactorDAOImpl
+PreguntaDAO <|.. PreguntaDAOImpl
+OpcionRespuestaDAO <|.. OpcionRespuestaDAOImpl
+PuestoDAO <|.. PuestoDAOImpl
+EvaluacionDAO <|.. EvaluacionDAOImpl
+CuestionarioDAO <|.. CuestionarioDAOImpl
+RespuestaDAO <|.. RespuestaDAOImpl
+RegistroAuditoriaDAO <|.. RegistroAuditoriaDAOImpl
+OrdenMeritoDAO <|.. OrdenMeritoDAOImpl
+
+FabricaDAO ..> ParametroDAO : provee las implementaciones
+DAOBase <|-- ParametroDAOImpl
+note "Todas las clases ...DAOImpl heredan de DAOBase\n(ejecución de sentencias con parámetros y\nconversión de tipos) y usan la conexión del\nhilo que obtienen de ConexionBD." as N2
+abstract class DAOBase
+ConexionBD <.. DAOBase
+Transaccion ..> ConexionBD
+@enduml

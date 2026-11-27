@@ -12,8 +12,8 @@ public class Competencia {
     private List<Factor> factores = new ArrayList<>();
 
     /**
-     * Una competencia puede evaluarse si posee al menos un factor con la cantidad
-     * mínima de preguntas (CU025 flujo 9.A).
+     * Una competencia puede evaluarse si posee al menos un factor con la cantidad mínima de preguntas (CU025
+     * flujo 9.A).
      */
     public boolean factores_evaluables() {
         for (Factor factor : factores) {

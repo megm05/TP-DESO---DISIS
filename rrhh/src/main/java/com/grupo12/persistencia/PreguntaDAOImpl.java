@@ -7,7 +7,7 @@ import com.grupo12.dominio.Pregunta;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Implementación JDBC (PostgreSQL) de {@link PreguntaDAO}. */
+/** Implementación JDBC (PostgreSQL) de PreguntaDAO. */
 public class PreguntaDAOImpl extends DAOBase implements PreguntaDAO {
 
     @Override

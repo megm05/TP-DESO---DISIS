@@ -5,11 +5,7 @@ import com.grupo12.persistencia.FabricaDAO;
 import com.grupo12.persistencia.FactorDAO;
 import java.util.List;
 
-/**
- * Gestor de factores. En esta entrega solo se implementa la consulta de los
- * factores de una competencia, que usa el alta de preguntas (CU021); el ABM de
- * factores (CU016 a CU019) queda fuera del alcance de la implementación.
- */
+/** Gestor de factores. */
 public class Gestor_de_factor {
 
     private final FactorDAO factorDAO;

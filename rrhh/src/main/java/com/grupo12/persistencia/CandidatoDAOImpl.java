@@ -7,10 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Implementación JDBC (PostgreSQL) de {@link CandidatoDAO}. */
+/** Implementación JDBC (PostgreSQL) de CandidatoDAO. */
 public class CandidatoDAOImpl extends DAOBase implements CandidatoDAO {
 
-    /** Columnas del candidato con el alias de tabla "ca", para reutilizar en otros DAO. */
     static final String COLUMNAS = "ca.id_candidato, ca.num_candidato, ca.tipo_doc, ca.nro_doc,"
             + " ca.nombre AS candidato_nombre, ca.apellido AS candidato_apellido, ca.email, ca.genero,"
             + " ca.fecha_nac, ca.escolaridad";

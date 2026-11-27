@@ -1,8 +1,8 @@
 package com.grupo12.dominio;
 
 /**
- * Parámetro del repositorio de configuraciones del sistema (CU026, observaciones):
- * instrucciones del cuestionario, preguntas por bloque, tiempos y accesos máximos.
+ * Parámetro del repositorio de configuraciones del sistema (CU026, observaciones): instrucciones del
+ * cuestionario, preguntas por bloque, tiempos y accesos máximos.
  */
 public class Parametro {
 

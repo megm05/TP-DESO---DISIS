@@ -43,9 +43,8 @@ public class Gestor_de_orden_merito {
     }
 
     /**
-     * Pasos 3 y 4: puestos que coinciden con los criterios de búsqueda, con la
-     * cantidad de candidatos y de evaluaciones completas de cada uno. El actor
-     * debe ingresar datos en al menos uno de los criterios.
+     * Pasos 3 y 4: puestos que coinciden con los criterios de búsqueda, con la cantidad de candidatos y de
+     * evaluaciones completas de cada uno.
      */
     public List<PuestoBusquedaDTO> buscar_puestos(Integer codigo, String nombre_puesto, String nombre_empresa) {
         if (codigo == null && Texto.estaVacio(nombre_puesto) && Texto.estaVacio(nombre_empresa)) {
@@ -61,20 +60,14 @@ public class Gestor_de_orden_merito {
     }
 
     /**
-     * Paso 6: evaluaciones del puesto, para que el actor seleccione sobre cuáles
-     * emitir el orden de mérito. Lista vacía si el puesto no posee evaluaciones (flujo 6.A).
+     * Paso 6: evaluaciones del puesto, para que el actor seleccione sobre cuáles emitir el orden de mérito.
      */
     public List<Evaluacion> obtener_evaluaciones(int id_puesto) {
         return evaluacionDAO.obtener_por_puesto(obtenerPuesto(id_puesto));
     }
 
     /**
-     * Paso 7: emite el orden de mérito del puesto para las evaluaciones
-     * seleccionadas y lo deja registrado.
-     *
-     * @param ids_evaluacion evaluaciones seleccionadas; vacío o null equivale a la opción TODAS
-     * @return todos los candidatos asociados a esas evaluaciones: primero los que integran el
-     *         orden de mérito (por puntaje obtenido) y luego el resto, agrupado por estado
+     * Paso 7: emite el orden de mérito del puesto para las evaluaciones seleccionadas y lo deja registrado.
      */
     public List<OrdenMeritoCandidatoDTO> generar(int id_puesto, List<Integer> ids_evaluacion, Consultor consultor) {
         return Transaccion.ejecutar(() -> {

@@ -1,0 +1,268 @@
+@startuml der
+title Diagrama Entidad-Relación (PostgreSQL)
+skinparam linetype ortho
+skinparam shadowing false
+skinparam nodesep 60
+skinparam ranksep 70
+hide circle
+skinparam class {
+  BackgroundColor White
+  BorderColor #555555
+  ArrowColor #555555
+}
+
+entity Empresa {
+  * id_empresa : serial <<PK>>
+  --
+  * nombre : varchar(100)
+}
+entity Puesto {
+  * id_puesto : serial <<PK>>
+  --
+  * id_empresa : integer <<FK>>
+  * nombre : varchar(100)
+  descripcion : varchar(500)
+}
+entity Competencia {
+  * id_competencia : serial <<PK>>
+  --
+  * nombre : varchar(100)
+  * tipo : varchar(20)
+}
+entity Puesto_Competencia {
+  * id_puesto : integer <<PK,FK>>
+  * id_competencia : integer <<PK,FK>>
+  --
+  * ponderacion_minima : numeric(5,2)
+}
+entity Factor {
+  * id_factor : serial <<PK>>
+  --
+  * id_competencia : integer <<FK>>
+  * nombre : varchar(100)
+  descripcion : varchar(500)
+}
+entity Opcion_respuesta {
+  * id_opcion : serial <<PK>>
+  --
+  * nombre : varchar(100)
+  descripcion : varchar(500)
+}
+entity Detalle_opcion {
+  * id_detalle : serial <<PK>>
+  --
+  * id_opcion : integer <<FK>>
+  * orden : integer
+  * descripcion : varchar(200)
+}
+entity Pregunta {
+  * id_pregunta : serial <<PK>>
+  --
+  * id_factor : integer <<FK>>
+  * id_opcion : integer <<FK>>
+  * nombre : varchar(100)
+  * pregunta : varchar(500)
+  descripcion : varchar(500)
+  * activo : boolean
+}
+entity Ponderacion_opcion {
+  * id_pregunta : integer <<PK,FK>>
+  * id_detalle : integer <<PK,FK>>
+  --
+  * ponderacion : numeric(4,2)
+}
+entity Consultor {
+  * id_consultor : serial <<PK>>
+  --
+  * nombre_usuario : varchar(15)
+  * contrasenia : varchar(64)
+  * nombre : varchar(100)
+  * apellido : varchar(100)
+}
+entity Candidato {
+  * id_candidato : serial <<PK>>
+  --
+  * num_candidato : integer
+  * tipo_doc : varchar(3)
+  * nro_doc : varchar(20)
+  * nombre : varchar(100)
+  * apellido : varchar(100)
+  email : varchar(150)
+  genero : char(1)
+  fecha_nac : date
+  escolaridad : varchar(100)
+}
+entity Evaluacion {
+  * id_evaluacion : serial <<PK>>
+  --
+  * id_puesto : integer <<FK>>
+  * id_consultor : integer <<FK>>
+  * fecha_generacion : date
+  * estado : varchar(20)
+}
+entity Cuestionario {
+  * id_cuestionario : serial <<PK>>
+  --
+  * id_evaluacion : integer <<FK>>
+  * id_candidato : integer <<FK>>
+  * clave : varchar(8)
+  * estado : varchar(20)
+  fecha_ini : timestamp
+  fecha_fin : timestamp
+  ultimo_ingreso : timestamp
+  fecha_cambio_estado : timestamp
+  * cant_accesos : integer
+  tiempo_max : numeric(8,2)
+}
+entity Bloque_pregunta {
+  * id_bloque : serial <<PK>>
+  --
+  * id_cuestionario : integer <<FK>>
+  * numero : integer
+  * completado : boolean
+}
+entity Respuesta {
+  * id_respuesta : serial <<PK>>
+  --
+  * id_bloque : integer <<FK>>
+  * id_pregunta : integer <<FK>>
+  * id_candidato : integer <<FK>>
+  id_detalle : integer <<FK>>
+  * orden : integer
+  fecha : timestamp
+}
+entity Resultado_competencia {
+  * id_cuestionario : integer <<PK,FK>>
+  * id_competencia : integer <<PK,FK>>
+  --
+  * total : numeric(5,2)
+}
+entity Resultado_factor {
+  * id_cuestionario : integer <<PK,FK>>
+  * id_factor : integer <<PK,FK>>
+  --
+  * total : numeric(5,2)
+}
+entity Parametro {
+  * clave : varchar(50) <<PK>>
+  --
+  * valor : varchar(2000)
+  descripcion : varchar(255)
+}
+entity Orden_merito {
+  * id_orden_merito : serial <<PK>>
+  --
+  * id_puesto : integer <<FK>>
+  * id_consultor : integer <<FK>>
+  * fecha_generacion : date
+}
+entity Orden_merito_Evaluacion {
+  * id_orden_merito : integer <<PK,FK>>
+  * id_evaluacion : integer <<PK,FK>>
+  --
+}
+entity Renglon_Orden_merito {
+  * id_orden_merito : integer <<PK,FK>>
+  * nro_renglon : integer <<PK>>
+  --
+  * id_candidato : integer <<FK>>
+  * id_cuestionario : integer <<FK>>
+  posicion : integer
+  puntaje_obtenido : numeric(5,2)
+}
+entity Reporte_comparativo <<fuera de la implementación>> {
+  * id_reporte : serial <<PK>>
+  --
+  * id_candidato : integer <<FK>>
+  * id_puesto : integer <<FK>>
+  * id_consultor : integer <<FK>>
+  * fecha_generacion : date
+}
+entity Registro_pregunta {
+  * id_registro : serial <<PK>>
+  --
+  * id_consultor : integer <<FK>>
+  * nombre_borrado : varchar(100)
+  * fecha_hora : timestamp
+}
+entity Registro_factor <<fuera de la implementación>> {
+  * id_registro : serial <<PK>>
+  --
+  * id_consultor : integer <<FK>>
+  * nombre_borrado : varchar(100)
+  * fecha_hora : timestamp
+}
+entity Registro_competencia <<fuera de la implementación>> {
+  * id_registro : serial <<PK>>
+  --
+  * id_consultor : integer <<FK>>
+  * nombre_borrado : varchar(100)
+  * fecha_hora : timestamp
+}
+entity Registro_puesto <<fuera de la implementación>> {
+  * id_registro : serial <<PK>>
+  --
+  * id_consultor : integer <<FK>>
+  * nombre_borrado : varchar(100)
+  * fecha_hora : timestamp
+}
+entity Registro_opcion_respuesta <<fuera de la implementación>> {
+  * id_registro : serial <<PK>>
+  --
+  * id_consultor : integer <<FK>>
+  * nombre_borrado : varchar(100)
+  * fecha_hora : timestamp
+}
+entity Registro_ejecucion <<fuera de la implementación>> {
+  * id_ejecucion : serial <<PK>>
+  --
+  * fecha_hora : timestamp
+  * accion : varchar(15)
+}
+
+Empresa ||--o{ Puesto : "ofrece"
+Puesto ||--o{ Puesto_Competencia : "requiere"
+Competencia ||--o{ Puesto_Competencia : "es requerida en"
+Competencia ||--o{ Factor : "se compone de"
+Opcion_respuesta ||--o{ Detalle_opcion : "se compone de"
+Factor ||--o{ Pregunta : "contiene"
+Opcion_respuesta ||--o{ Pregunta : "se usa en"
+Pregunta ||--o{ Ponderacion_opcion : "pondera"
+Detalle_opcion ||--o{ Ponderacion_opcion : "es ponderado en"
+Puesto ||--o{ Evaluacion : "se evalúa en"
+Consultor ||--o{ Evaluacion : "genera"
+Evaluacion ||--o{ Cuestionario : "contiene"
+Candidato ||--o{ Cuestionario : "realiza"
+Cuestionario ||--o{ Bloque_pregunta : "se divide en"
+Bloque_pregunta ||--o{ Respuesta : "agrupa"
+Pregunta ||--o{ Respuesta : "es respondida en"
+Candidato ||--o{ Respuesta : "responde"
+Detalle_opcion |o--o{ Respuesta : "es elegida en"
+Cuestionario ||--o{ Resultado_competencia : "obtiene"
+Competencia ||--o{ Resultado_competencia : "se evalúa en"
+Cuestionario ||--o{ Resultado_factor : "obtiene"
+Factor ||--o{ Resultado_factor : "se evalúa en"
+Puesto ||--o{ Orden_merito : "de"
+Consultor ||--o{ Orden_merito : "emite"
+Orden_merito ||--o{ Orden_merito_Evaluacion : "abarca"
+Evaluacion ||--o{ Orden_merito_Evaluacion : "se incluye en"
+Orden_merito ||--o{ Renglon_Orden_merito : "se compone de"
+Candidato ||--o{ Renglon_Orden_merito : "se detalla en"
+Cuestionario ||--o{ Renglon_Orden_merito : "se detalla en"
+Candidato ||--o{ Reporte_comparativo : "de"
+Puesto ||--o{ Reporte_comparativo : "de"
+Consultor ||--o{ Reporte_comparativo : "genera"
+Consultor ||--o{ Registro_pregunta
+Consultor ||--o{ Registro_factor
+Consultor ||--o{ Registro_competencia
+Consultor ||--o{ Registro_puesto
+Consultor ||--o{ Registro_opcion_respuesta
+
+note as N1
+  Notación pata de cuervo (Kendall, cap. 2).
+  * = columna obligatoria (NOT NULL).
+  Las tablas marcadas <<fuera de la implementación>>
+  forman parte del diseño pero sus casos de uso
+  no se implementaron en esta entrega.
+end note
+@enduml

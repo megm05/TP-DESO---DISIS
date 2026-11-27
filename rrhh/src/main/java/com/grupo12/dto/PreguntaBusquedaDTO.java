@@ -1,8 +1,6 @@
 package com.grupo12.dto;
 
-/**
- * Fila de la lista de preguntas (CU020 paso 4): combina competencia, factor y pregunta.
- */
+/** Fila de la lista de preguntas (CU020 paso 4): combina competencia, factor y pregunta. */
 public class PreguntaBusquedaDTO {
 
     private final int id_pregunta;

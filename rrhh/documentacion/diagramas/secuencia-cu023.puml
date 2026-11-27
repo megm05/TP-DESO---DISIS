@@ -1,0 +1,57 @@
+@startuml secuencia-cu023
+title CU023 - Dar de baja Pregunta
+skinparam shadowing false
+skinparam sequenceMessageAlign left
+skinparam responseMessageBelowArrow true
+autonumber
+
+actor Consultor
+participant ":PantallaGestionPreguntas" as PT
+participant ":Gestor_de_pregunta" as GP
+participant ":PreguntaDAO" as PDAO
+participant "pregunta:Pregunta" as PREG
+participant "registro:Registro_pregunta" as REG
+participant ":RegistroAuditoriaDAO" as ADAO
+
+Consultor -> PT : selecciona una pregunta y presiona "Eliminar"
+activate PT
+PT -> GP : obtener_datos(id_pregunta)
+activate GP
+GP -> PDAO : obtener_por_id(id_pregunta)
+PDAO --> GP : pregunta
+GP --> PT : DatosPreguntaDTO
+deactivate GP
+PT --> Consultor : "Los datos de la pregunta <nombre> serán eliminados del sistema"\n[ELIMINAR] [CANCELAR]
+
+alt 3.A el actor presiona "CANCELAR"
+  Consultor -> PT : CANCELAR
+  PT --> Consultor : vuelve a la grilla del CU020 (el CU termina)
+
+else el actor presiona "ELIMINAR"
+  Consultor -> PT : ELIMINAR
+  PT -> GP : dar_baja(id_pregunta, consultor)
+  activate GP
+  GP -> PDAO : obtener_por_id(id_pregunta)
+  activate PDAO
+  PDAO --> GP : pregunta
+  deactivate PDAO
+  create REG
+  GP -> REG : new Registro_pregunta()
+  GP -> REG : Borrar_Con_Registro(pregunta, fecha_hora, consultor)
+  activate REG
+  REG -> PREG : desactivar()
+  note right of PREG : baja lógica (activo = false)
+  REG -> REG : registra nombre borrado,\nfecha y hora y consultor
+  REG --> GP
+  deactivate REG
+  GP -> PDAO : actualizar(pregunta)
+  GP -> ADAO : guardar(registro)
+  note right of ADAO : requerimiento especial:\nregistro de auditoría
+  GP --> PT
+  deactivate GP
+  PT --> Consultor : "Los datos de la pregunta <nombre> han sido eliminados del sistema."
+  Consultor -> PT : presiona cualquier tecla
+  PT --> Consultor : vuelve a la grilla del CU020 actualizada
+end
+deactivate PT
+@enduml

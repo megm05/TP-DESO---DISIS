@@ -9,9 +9,7 @@ public interface EvaluacionDAO {
 
     Evaluacion obtener_por_id(int id);
 
-    /** Guarda la evaluación y, en cascada, los cuestionarios que la componen. */
     void guardar(Evaluacion evaluacion);
 
-    /** Evaluaciones generadas para un puesto. */
     List<Evaluacion> obtener_por_puesto(Puesto puesto);
 }

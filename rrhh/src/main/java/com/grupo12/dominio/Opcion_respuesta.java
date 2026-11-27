@@ -5,8 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Opción de respuesta: conjunto reutilizable de opciones que puede vincularse a
- * las preguntas (por ejemplo "VERDADERO - FALSO"). Tiene ABM propio (CU024, CU029-031).
+ * Opción de respuesta: conjunto reutilizable de opciones que puede vincularse a las preguntas (por ejemplo
+ * "VERDADERO - FALSO").
  */
 public class Opcion_respuesta {
 
@@ -15,7 +15,6 @@ public class Opcion_respuesta {
     private String descripcion;
     private List<Detalle_opcion> detalles = new ArrayList<>();
 
-    /** Lista de opciones ordenada por orden de visualización. */
     public List<Detalle_opcion> obtener_detalles() {
         List<Detalle_opcion> ordenados = new ArrayList<>(detalles);
         ordenados.sort(Comparator.comparingInt(Detalle_opcion::getOrden));

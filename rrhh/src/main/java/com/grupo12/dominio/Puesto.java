@@ -3,10 +3,7 @@ package com.grupo12.dominio;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Puesto o función que una empresa solicita cubrir. Sus características son el
- * conjunto de competencias requeridas con la ponderación mínima de cada una.
- */
+/** Puesto o función que una empresa solicita cubrir. */
 public class Puesto {
 
     private int id_puesto;
@@ -15,7 +12,6 @@ public class Puesto {
     private Empresa empresa;
     private List<Caracteristicas_del_puesto> caracteristicas = new ArrayList<>();
 
-    /** Competencias que forman parte de las características del puesto. */
     public List<Competencia> obtener_competencias() {
         List<Competencia> competencias = new ArrayList<>();
         for (Caracteristicas_del_puesto caracteristica : caracteristicas) {
@@ -37,11 +33,6 @@ public class Puesto {
         return true;
     }
 
-    /**
-     * Ponderación mínima que el puesto requiere para una competencia.
-     *
-     * @return la ponderación requerida, o 0 si la competencia no pertenece al puesto
-     */
     public double obtener_ponderacion_minima(Competencia competencia) {
         for (Caracteristicas_del_puesto caracteristica : caracteristicas) {
             if (caracteristica.getCompetencia().getId_competencia() == competencia.getId_competencia()) {

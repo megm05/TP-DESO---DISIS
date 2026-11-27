@@ -9,8 +9,8 @@ public final class Texto {
     }
 
     /**
-     * Normaliza un dato literal: sin espacios sobrantes y SIEMPRE en mayúsculas
-     * (requerimiento especial de los casos de uso). Devuelve "" si es nulo.
+     * Normaliza un dato literal: sin espacios sobrantes y SIEMPRE en mayúsculas (requerimiento especial de
+     * los casos de uso).
      */
     public static String mayusculas(String texto) {
         return texto == null ? "" : texto.trim().toUpperCase(Locale.ROOT);

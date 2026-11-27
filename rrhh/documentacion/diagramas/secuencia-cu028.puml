@@ -1,0 +1,84 @@
+@startuml secuencia-cu028
+title CU028 - Emitir Orden de mérito
+skinparam shadowing false
+skinparam sequenceMessageAlign left
+skinparam responseMessageBelowArrow true
+autonumber
+
+actor Consultor
+participant ":PantallaOrdenMerito" as PT
+participant ":Gestor_de_orden_merito" as GOM
+participant ":PuestoDAO" as PUDAO
+participant ":EvaluacionDAO" as EDAO
+participant ":CuestionarioDAO" as QDAO
+participant ":OrdenMeritoDAO" as OMDAO
+participant "ordenMerito:OrdenMerito" as OM
+participant "cuestionario:Cuestionario" as CU
+
+Consultor -> PT : selecciona del menú "Orden de Méritos"
+activate PT
+PT --> Consultor : criterios (Código, Nombre del Puesto, Empresa) [Buscar] [Cancelar]
+
+loop hasta que el actor seleccione un puesto con evaluaciones
+  break 2.A el actor presiona "Cancelar"
+    PT --> Consultor : el CU termina
+  end
+  Consultor -> PT : ingresa al menos un criterio y presiona "Buscar"
+  PT -> GOM : buscar_puestos(codigo, nombre_puesto, nombre_empresa)
+  activate GOM
+  GOM -> PUDAO : buscar_por_filtros(codigo, nombre_puesto, nombre_empresa)
+  PUDAO --> GOM : list<Puesto>
+  loop por cada puesto
+    GOM -> QDAO : contar_por_puesto(puesto)
+    GOM -> QDAO : contar_completos_por_puesto(puesto)
+  end
+  GOM --> PT : list<PuestoBusquedaDTO>
+  deactivate GOM
+  PT --> Consultor : Código, Nombre, Empresa, Candidatos, Evaluaciones Completas
+  Consultor -> PT : selecciona un puesto y pulsa "Emitir el orden de mérito"
+  PT -> GOM : obtener_evaluaciones(id_puesto)
+  activate GOM
+  GOM -> PUDAO : obtener_por_id(id_puesto)
+  GOM -> EDAO : obtener_por_puesto(puesto)
+  EDAO --> GOM : list<Evaluacion>
+  GOM --> PT : list<Evaluacion>
+  deactivate GOM
+  opt 6.A el puesto no posee evaluaciones
+    PT --> Consultor : mensaje (el CU continúa en el paso 4)
+  end
+end
+
+PT --> Consultor : solicita las evaluaciones o la opción TODAS
+Consultor -> PT : selecciona las evaluaciones y presiona "Emitir"
+PT -> GOM : generar(id_puesto, ids_evaluacion, consultor)
+activate GOM
+GOM -> PUDAO : obtener_por_id(id_puesto)
+GOM -> EDAO : obtener_por_puesto(puesto)
+create OM
+GOM -> OM : new OrdenMerito()
+GOM -> QDAO : obtener_por_evaluaciones(evaluaciones)
+QDAO --> GOM : list<Cuestionario> (con candidato y resultados)
+loop por cada cuestionario
+  opt el cuestionario está COMPLETO
+    GOM -> CU : obtener_puntaje_obtenido()
+    CU --> GOM : puntaje
+  end
+  GOM -> OM : agregar_renglon(candidato, cuestionario, puntaje)
+end
+GOM -> OM : generar()
+activate OM
+loop por cada renglón
+  OM -> CU : alcanza_ponderaciones_minimas(puesto)
+  CU --> OM : boolean
+end
+note right of OM : integran el orden los completos que alcanzaron las\nponderaciones mínimas, por puntaje; el resto se agrupa\npor estado del cuestionario
+deactivate OM
+GOM -> OMDAO : guardar(ordenMerito)
+GOM --> PT : list<OrdenMeritoCandidatoDTO>
+deactivate GOM
+PT --> Consultor : listado: Tipo y Nro. de documento, Apellido, Nombre,\nPuntaje Obtenido (1) y Datos Adicionales (2)
+
+Consultor -> PT : selecciona "Imprimir"
+PT --> Consultor : el sistema envía el listado a la impresora (diálogo de impresión del navegador)
+deactivate PT
+@enduml

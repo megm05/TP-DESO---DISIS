@@ -1,10 +1,6 @@
 package com.grupo12.dominio;
 
-/**
- * Clase asociación entre {@link Pregunta} y {@link Detalle_opcion}: ponderación
- * que la pregunta asigna a esa opción. Las ponderaciones de una pregunta suman 10
- * y son siempre 0 o positivas (CU021, observaciones).
- */
+/** Clase asociación entre Pregunta y Detalle_opcion: ponderación que la pregunta asigna a esa opción. */
 public class Ponderacion_opcion {
 
     private double ponderacion;

@@ -1,7 +1,4 @@
-/* Capit@l Humano - Gestión de Evaluaciones de Perfiles
-   Estilo basado en los wireframes del grupo: cada pantalla es una ventana con el
-   título centrado, recuadros con leyenda, Cancelar a la izquierda y Aceptar a la
-   derecha, y mensajes emergentes con ícono. */
+/* Capit@l Humano - Gestión de Evaluaciones de Perfiles (estilo de los wireframes del grupo) */
 :root {
   --tinta: #1e252d;
   --gris: #5b6570;

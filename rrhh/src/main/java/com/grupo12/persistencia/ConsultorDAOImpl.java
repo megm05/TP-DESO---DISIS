@@ -4,7 +4,7 @@ import com.grupo12.dominio.Consultor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/** Implementación JDBC (PostgreSQL) de {@link ConsultorDAO}. */
+/** Implementación JDBC (PostgreSQL) de ConsultorDAO. */
 public class ConsultorDAOImpl extends DAOBase implements ConsultorDAO {
 
     private static final String SELECT =
