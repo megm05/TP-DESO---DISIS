@@ -100,3 +100,8 @@ Resultado: 94 de 94 verificaciones correctas, en PostgreSQL 16 y en el modo demo
 `documentacion/Documentacion del sistema - TP 2026 Grupo 12` (Word y PDF): arquitectura,
 diagramas de clases, DER, secuencias y despliegue, decisiones de diseño, pruebas,
 manual de instalación y manual de usuario.
+
+`documentacion/Diseños de entrada y salida - TP diseño parte 1 Revisado.pdf`: wireframes,
+cuadros de campos, mensajes emergentes y salidas (entrega 1).
+
+`documentacion/diagramas/`: cada diagrama en imagen (PNG) y en PlantUML.

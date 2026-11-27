@@ -1,8 +1,10 @@
 package com.grupo12.gestores;
 
 import com.grupo12.dominio.Competencia;
+import com.grupo12.dto.CompetenciaDTO;
 import com.grupo12.persistencia.CompetenciaDAO;
 import com.grupo12.persistencia.FabricaDAO;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Gestor de competencias. */
@@ -18,7 +20,13 @@ public class Gestor_de_competencia {
         this.competenciaDAO = competenciaDAO;
     }
 
-    public List<Competencia> buscar(String nombre_competencia) {
-        return competenciaDAO.buscar_por_nombre(nombre_competencia);
+    /** Competencias para la lista de selección del alta de preguntas (CU021 paso 1). */
+    public List<CompetenciaDTO> buscar(String nombre_competencia) {
+        List<CompetenciaDTO> resultado = new ArrayList<>();
+        for (Competencia competencia : competenciaDAO.buscar_por_nombre(nombre_competencia)) {
+            resultado.add(new CompetenciaDTO(competencia.getId_competencia(), competencia.getNombre(),
+                    competencia.getTipo()));
+        }
+        return resultado;
     }
 }

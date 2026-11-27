@@ -2,6 +2,8 @@ package com.grupo12.gestores;
 
 import com.grupo12.dominio.Detalle_opcion;
 import com.grupo12.dominio.Opcion_respuesta;
+import com.grupo12.dto.DetalleOpcionDTO;
+import com.grupo12.dto.OpcionRespuestaDTO;
 import com.grupo12.persistencia.FabricaDAO;
 import com.grupo12.persistencia.OpcionRespuestaDAO;
 import com.grupo12.util.Texto;
@@ -21,27 +23,28 @@ public class Gestor_de_respuesta {
         this.opcionRespuestaDAO = opcionRespuestaDAO;
     }
 
-    public List<Opcion_respuesta> buscar(String nombre) {
-        List<Opcion_respuesta> todas = opcionRespuestaDAO.obtener_todos();
-        if (Texto.estaVacio(nombre)) {
-            return todas;
-        }
-        String buscado = Texto.mayusculas(nombre);
-        List<Opcion_respuesta> coincidentes = new ArrayList<>();
-        for (Opcion_respuesta opcion : todas) {
-            if (Texto.mayusculas(opcion.getNombre()).contains(buscado)) {
-                coincidentes.add(opcion);
+    /** Opciones de respuesta para la lista de selección del alta de preguntas (CU021 paso 1). */
+    public List<OpcionRespuestaDTO> buscar(String nombre) {
+        String buscado = Texto.estaVacio(nombre) ? null : Texto.mayusculas(nombre);
+        List<OpcionRespuestaDTO> resultado = new ArrayList<>();
+        for (Opcion_respuesta opcion : opcionRespuestaDAO.obtener_todos()) {
+            if (buscado == null || Texto.mayusculas(opcion.getNombre()).contains(buscado)) {
+                resultado.add(new OpcionRespuestaDTO(opcion.getId_opcion(), opcion.getNombre()));
             }
         }
-        return coincidentes;
+        return resultado;
     }
 
-    /**
-     * Lista de opciones (orden y descripción) de una opción de respuesta, ordenada por orden, para la grilla
-     * donde se ingresan las ponderaciones (CU021).
-     */
-    public List<Detalle_opcion> obtener_detalles(int id_opcion) {
+    /** Filas de la grilla Orden / Descripción / Ponderación, ordenadas por orden (CU021). */
+    public List<DetalleOpcionDTO> obtener_detalles(int id_opcion) {
+        List<DetalleOpcionDTO> resultado = new ArrayList<>();
         Opcion_respuesta opcion = opcionRespuestaDAO.obtener_por_id(id_opcion);
-        return opcion == null ? new ArrayList<>() : opcion.obtener_detalles();
+        if (opcion != null) {
+            for (Detalle_opcion detalle : opcion.obtener_detalles()) {
+                resultado.add(new DetalleOpcionDTO(detalle.getId_detalle(), detalle.getOrden(),
+                        detalle.getDescripcion()));
+            }
+        }
+        return resultado;
     }
 }

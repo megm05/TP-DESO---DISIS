@@ -20,7 +20,7 @@ participant "puesto:Puesto" as PU
 participant "competencia:Competencia" as COMP
 participant "cuestionario:Cuestionario" as CU
 
-Consultor -> PT : selecciona del menú "Evaluar Candidatos"
+Consultor -> PT : selecciona del menú "Evaluar Candidatos" (paso 1)
 activate PT
 PT -> GE : iniciar_evaluacion(consultor)
 activate GE
@@ -28,36 +28,42 @@ create EV
 GE -> EV : new Evaluacion()
 GE --> PT : evaluacion
 deactivate GE
-PT --> Consultor : pantalla de Búsqueda de Candidatos (Apellido, Nombre, Número de Candidato)
+PT --> Consultor : pantalla de Búsqueda de Candidatos (Apellido, Nombre, Número de Candidato) (paso 2)
 
 == Selección de candidatos (pasos 3 a 6) ==
-loop hasta que todos los candidatos a evaluar estén disponibles
+loop hasta que todos los candidatos a evaluar estén disponibles (6.A vuelve al paso 4)
   loop el actor busca y agrega candidatos
-    Consultor -> PT : completa los filtros y presiona "Buscar"
+    Consultor -> PT : completa los filtros y presiona "Buscar" (paso 3)
     PT -> GCA : buscar(apellido, nombre, num_candidato)
     activate GCA
     GCA -> CDAO : buscar_por_filtros(apellido, nombre, num_candidato)
     CDAO --> GCA : list<Candidato>
     GCA --> PT : list<CandidatoBusquedaDTO>
     deactivate GCA
-    Consultor -> PT : selecciona candidatos y presiona "Agregar"
+    Consultor -> PT : selecciona candidatos y presiona "Agregar" (paso 4)
     PT -> GE : agregar_candidatos(evaluacion, nros_candidato)
     activate GE
-    opt 4.A no seleccionó candidatos
+    alt 4.A no seleccionó candidatos
       GE --> PT : ValidacionException
-    end
-    loop por cada número de candidato
-      GE -> CDAO : obtener_por_numero(num_candidato)
-      CDAO --> GE : candidato
-      GE -> EV : agregar_candidato(candidato)
+      PT --> Consultor : "Debe seleccionar uno o más candidatos." (vuelve al paso 4)
+    else seleccionó uno o más candidatos (paso 5)
+      loop por cada número de candidato
+        GE -> CDAO : obtener_por_numero(num_candidato)
+        CDAO --> GE : candidato
+        GE -> EV : agregar_candidato(candidato)
+      end
+      GE --> PT
+      PT --> Consultor : grilla "Candidatos a evaluar" actualizada
     end
     deactivate GE
-    opt 5.A el actor selecciona candidatos y presiona "Quitar"
+    opt 5.A el actor selecciona candidatos de la grilla y presiona "Quitar"
       PT -> GE : quitar_candidatos(evaluacion, nros_candidato)
+      activate GE
       GE -> EV : quitar_candidato(candidato)
+      deactivate GE
     end
   end
-  Consultor -> PT : presiona "Siguiente"
+  Consultor -> PT : presiona "Siguiente" (paso 6)
   PT -> GE : validar_candidatos_disponibles(candidatos)
   activate GE
   loop por cada candidato a evaluar
@@ -78,82 +84,112 @@ GPU -> PUDAO : buscar_por_filtros(null, null, null)
 PUDAO --> GPU : list<Puesto>
 GPU --> PT : list<PuestoSeleccionDTO>
 deactivate GPU
-PT --> Consultor : pantalla de Evaluación de Candidatos (función o puesto y empresa)
-Consultor -> PT : selecciona la función o puesto
-PT -> GE : seleccionar_puesto(evaluacion, id_puesto)
-activate GE
-GE -> PUDAO : obtener_por_id(id_puesto)
-PUDAO --> GE : puesto
-GE -> EV : seleccionar_puesto(puesto)
-deactivate GE
-PT -> GE : validar_competencias_evaluables(puesto)
-activate GE
-GE -> PU : obtener_competencias()
-PU --> GE : list<Competencia>
-loop por cada competencia del puesto
-  GE -> COMP : factores_evaluables()
-  COMP --> GE : boolean
-  note right of COMP : al menos un factor con\n2 o más preguntas activas
-end
-GE --> PT : list<Competencia> no evaluables
-deactivate GE
-break 9.A alguna competencia no posee factores evaluables
-  PT --> Consultor : nombres de las competencias que no pueden ser evaluadas
-  Consultor -> PT : presiona "Aceptar"
-  PT --> Consultor : el CU finaliza y vuelve a la pantalla principal
-end
-PT -> GE : obtener_competencias_requeridas(puesto)
-GE --> PT : list<CompetenciaRequeridaDTO>
-PT --> Consultor : competencias de la función con su ponderación requerida
+PT --> Consultor : pantalla de Evaluación de Candidatos (función o puesto y empresa) (paso 7)
 
-== Claves de ingreso y guardado (pasos 10 a 13) ==
-Consultor -> PT : presiona "Siguiente"
-PT -> GE : generar_evaluacion(evaluacion)
-activate GE
-opt 10.A no seleccionó una función
-  GE --> PT : ValidacionException
-end
-GE -> PARDAO : obtener_por_clave("TIEMPO_MAX_COMPLETAR")
-PARDAO --> GE : parametro
-GE -> EV : generar_cuestionarios(tiempo_max)
-activate EV
-loop por cada candidato a evaluar
-  create CU
-  EV -> CU : new Cuestionario()
-  EV -> CU : generar_clave()
-  note right of CU : 8 caracteres aleatorios\ncon letras y dígitos
-  EV -> CU : activar()
-end
-EV --> GE : list<Cuestionario>
-deactivate EV
-GE -> GE : obtener_candidatos_con_clave(evaluacion)
-GE --> PT : list<CandidatoConClaveDTO>
-deactivate GE
-PT --> Consultor : lista de candidatos a evaluar (Apellido, Nombre, Tipo doc., Nro. doc., Clave)
+loop hasta que haya una función seleccionada al presionar "Siguiente" (10.A vuelve al paso 8)
+  opt el actor selecciona la función o puesto (paso 8)
+    Consultor -> PT : selecciona la función o puesto
+    PT -> GE : seleccionar_puesto(evaluacion, id_puesto)
+    activate GE
+    GE -> PUDAO : obtener_por_id(id_puesto)
+    PUDAO --> GE : puesto
+    GE -> EV : seleccionar_puesto(puesto)
+    deactivate GE
+    PT -> GE : validar_competencias_evaluables(puesto)
+    activate GE
+    GE -> PU : obtener_competencias()
+    PU --> GE : list<Competencia>
+    loop por cada competencia del puesto
+      GE -> COMP : factores_evaluables()
+      COMP --> GE : boolean
+      note right of COMP : al menos un factor con\n2 o más preguntas activas
+    end
+    GE --> PT : list<Competencia> no evaluables
+    deactivate GE
+    break 9.A alguna competencia no posee factores evaluables
+      PT --> Consultor : nombres de las competencias que no pueden ser evaluadas
+      Consultor -> PT : presiona "Aceptar"
+      PT --> Consultor : el CU finaliza y vuelve a la pantalla principal
+    end
+    PT -> GE : obtener_competencias_requeridas(puesto)
+    GE --> PT : list<CompetenciaRequeridaDTO>
+    PT --> Consultor : competencias de la función con su ponderación requerida (paso 9)
+  end
 
-break 12.A el actor presiona "Cancelar"
-  PT --> Consultor : vuelve a la pantalla principal (el CU finaliza)
-end
-Consultor -> PT : presiona "Finalizar"
-PT -> GE : guardar_evaluacion(evaluacion)
-activate GE
-GE -> EDAO : guardar(evaluacion)
-note right of EDAO : guarda la evaluación y, en cascada,\nlos cuestionarios en estado ACTIVO
-GE --> PT
-deactivate GE
-PT --> Consultor : "¿Desea exportar la lista de candidatos con sus claves a un archivo Excel?"
-
-== Exportación (pasos 14 a 17) ==
-alt el actor elige exportar
-  Consultor -> PT : SI
-  PT -> GE : exportar_claves_excel(evaluacion)
+  Consultor -> PT : presiona "Siguiente" (paso 10)
+  PT -> GE : generar_evaluacion(evaluacion)
   activate GE
-  GE --> PT : ArchivoDTO (aaaa-mm-dd-hh-mm-NombreFunción.xlsx)
+  alt 10.A no seleccionó ninguna función
+    GE --> PT : ValidacionException
+    PT --> Consultor : "Debe seleccionar una función." (vuelve al paso 8)
+  else hay una función seleccionada
+    note right of GE : paso 11: se generan los cuestionarios\ny sus claves de ingreso
+    GE -> PARDAO : obtener_por_clave("TIEMPO_MAX_COMPLETAR")
+    PARDAO --> GE : parametro
+    GE -> EV : generar_cuestionarios(tiempo_max)
+    activate EV
+    loop por cada candidato a evaluar
+      create CU
+      EV -> CU : new Cuestionario()
+      EV -> CU : generar_clave()
+      note right of CU : 8 caracteres aleatorios\ncon letras y dígitos
+      EV -> CU : activar()
+      note right of CU : estado ACTIVO
+    end
+    EV --> GE : list<Cuestionario>
+    deactivate EV
+    GE -> GE : obtener_candidatos_con_clave(evaluacion)
+    GE --> PT : list<CandidatoConClaveDTO>
+    PT --> Consultor : lista de candidatos a evaluar con la clave generada\n(Apellido, Nombre, Tipo doc., Nro. doc., Clave de ingreso)
+  end
   deactivate GE
-  PT --> Consultor : descarga: el navegador permite elegir la carpeta y guardar
-else 14.A el actor elige no exportar
-  Consultor -> PT : NO
-  PT --> Consultor : el CU finaliza y vuelve a la pantalla principal
+end
+
+== Guardado y exportación (pasos 12 a 18) ==
+alt el actor presiona "Finalizar" (paso 12)
+  Consultor -> PT : presiona "Finalizar"
+  PT -> GE : guardar_evaluacion(evaluacion)
+  activate GE
+  GE -> GE : validarQueSePuedeEvaluar(evaluacion)
+  GE -> EDAO : guardar(evaluacion)
+  activate EDAO
+  note right of EDAO : INSERT en Evaluacion
+  loop por cada cuestionario de la evaluación
+    EDAO -> QDAO : guardar(cuestionario)
+    activate QDAO
+    note right of QDAO : INSERT en Cuestionario:\nestado ACTIVO, clave y tiempo máximo
+    deactivate QDAO
+  end
+  EDAO --> GE
+  deactivate EDAO
+  GE --> PT
+  deactivate GE
+  PT --> Consultor : "¿Desea exportar la lista de candidatos con sus claves a un archivo Excel?" (paso 13)
+
+  loop hasta que el actor guarda el archivo o elige no exportar (16.A vuelve al paso 14)
+    alt el actor elige exportar (paso 14)
+      Consultor -> PT : SI
+      PT -> GE : exportar_claves_excel(evaluacion)
+      activate GE
+      GE --> PT : ArchivoDTO (aaaa-mm-dd-hh-mm-NombreFunción.xlsx)
+      deactivate GE
+      PT --> Consultor : pantalla para elegir la carpeta donde guardar el archivo (paso 15)
+      alt el actor elige la carpeta y presiona "Guardar" (paso 16)
+        Consultor -> PT : elige la carpeta y presiona "Guardar"
+        PT --> Consultor : el archivo queda guardado (paso 17)
+      else 16.A el actor presiona "Cancelar"
+        Consultor -> PT : presiona "Cancelar"
+        PT --> Consultor : vuelve a preguntar si desea exportar (paso 14)
+      end
+    else 14.A el actor elige no exportar
+      Consultor -> PT : NO
+    end
+  end
+  PT --> Consultor : el CU finaliza y vuelve a la pantalla principal (paso 18)
+
+else 12.A el actor presiona "Cancelar"
+  Consultor -> PT : presiona "Cancelar"
+  PT --> Consultor : vuelve a la pantalla principal (el CU finaliza sin guardar)
 end
 deactivate PT
 @enduml

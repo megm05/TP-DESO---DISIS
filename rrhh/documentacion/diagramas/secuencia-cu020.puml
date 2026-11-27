@@ -14,44 +14,43 @@ Consultor -> PT : selecciona del menú la opción "Preguntas"
 activate PT
 PT --> Consultor : pantalla en blanco con los criterios\n(Competencia, Factor, Nombre de Pregunta)
 
-loop el actor continúa gestionando preguntas
-  break el actor presiona "Salir"
-    PT --> Consultor : vuelve al menú principal sin guardar cambios
-  end
-
-  alt el actor ingresa al menos un criterio y presiona "Buscar"
+loop mientras el actor no presione "Salir"
+  alt el actor ingresa los criterios y presiona "Buscar" (paso 3)
     Consultor -> PT : ingresa criterios y presiona "Buscar"
     PT -> GP : buscar(nombre_competencia, nombre_factor, nombre_pregunta)
     activate GP
-    opt no ingresó ningún criterio
+    alt no ingresó datos en ningún criterio
       GP --> PT : ValidacionException
       PT --> Consultor : "Debe ingresar datos en al menos uno de los criterios de búsqueda."
+    else ingresó al menos un criterio
+      GP -> PDAO : buscar_por_filtros(nombre_competencia, nombre_factor, nombre_pregunta)
+      activate PDAO
+      note right of PDAO : criterio "contiene",\nsolo preguntas activas
+      PDAO --> GP : list<Pregunta>
+      deactivate PDAO
+      loop por cada pregunta
+        GP -> GP : new PreguntaBusquedaDTO(...)
+      end
+      GP --> PT : list<PreguntaBusquedaDTO>
+      PT --> Consultor : grilla (Competencia, Factor, Pregunta) (paso 4)
     end
-    GP -> PDAO : buscar_por_filtros(nombre_competencia, nombre_factor, nombre_pregunta)
-    activate PDAO
-    note right of PDAO : criterio "contiene",\nsolo preguntas activas
-    PDAO --> GP : list<Pregunta>
-    deactivate PDAO
-    loop por cada pregunta
-      GP -> GP : new PreguntaBusquedaDTO(...)
-    end
-    GP --> PT : list<PreguntaBusquedaDTO>
     deactivate GP
-    PT --> Consultor : grilla (Competencia, Factor, Pregunta)
 
-  else el actor presiona "Nuevo"
+  else 3.A el actor presiona "Nuevo"
     ref over Consultor, PT : CU021 - Dar de alta Pregunta
     PT -> PT : actualiza la grilla con los últimos criterios
 
-  else el actor selecciona una pregunta y presiona "Modificar"
+  else 5.A el actor selecciona una pregunta y presiona "Modificar"
     ref over Consultor, PT : CU022 - Modificar Pregunta
     PT -> PT : actualiza la grilla con los últimos criterios
 
-  else el actor selecciona una pregunta y presiona "Eliminar"
+  else 5.B el actor selecciona una pregunta y presiona "Eliminar"
     ref over Consultor, PT : CU023 - Dar de baja Pregunta
     PT -> PT : actualiza la grilla con los últimos criterios
   end
-
 end
+
+Consultor -> PT : presiona "Salir" (en cualquier momento del caso de uso)
+PT --> Consultor : vuelve al menú principal sin guardar cambios
 deactivate PT
 @enduml

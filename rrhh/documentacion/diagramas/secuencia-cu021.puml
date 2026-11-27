@@ -17,22 +17,30 @@ participant ":OpcionRespuestaDAO" as ODAO
 participant ":PreguntaDAO" as PDAO
 participant "opcion:Opcion_respuesta" as OR
 participant "pregunta:Pregunta" as PREG
+participant "pond:Ponderacion_opcion" as POND
 
 activate PT
-loop el actor desea cargar otra pregunta
+loop el actor desea cargar otra pregunta (5.A)
+  == Paso 1: pantalla de alta con las listas cargadas ==
   PT -> GC : buscar(null)
   activate GC
   GC -> CDAO : buscar_por_nombre(null)
   CDAO --> GC : list<Competencia>
-  GC --> PT : list<Competencia>
+  loop por cada competencia
+    GC -> GC : new CompetenciaDTO(id, nombre, tipo)
+  end
+  GC --> PT : list<CompetenciaDTO>
   deactivate GC
   PT -> GR : buscar(null)
   activate GR
   GR -> ODAO : obtener_todos()
   ODAO --> GR : list<Opcion_respuesta>
-  GR --> PT : list<Opcion_respuesta>
+  loop por cada opción de respuesta
+    GR -> GR : new OpcionRespuestaDTO(id, nombre)
+  end
+  GR --> PT : list<OpcionRespuestaDTO>
   deactivate GR
-  PT --> Consultor : pantalla de alta (Competencia, Factor, Nombre de Pregunta,\nPregunta, Descripción, Opción de Respuesta)\n[Generar con IA] [Aceptar] [Cancelar]
+  PT --> Consultor : pantalla de alta con las Competencias y las Opciones de Respuesta cargadas\n(Factor, Nombre de Pregunta, Pregunta, Descripción)\n[Generar con IA] [Aceptar] [Cancelar]
 
   opt el actor selecciona una Competencia
     Consultor -> PT : selecciona la Competencia
@@ -40,7 +48,10 @@ loop el actor desea cargar otra pregunta
     activate GF
     GF -> FDAO : obtener_por_competencia(id_competencia)
     FDAO --> GF : list<Factor>
-    GF --> PT : list<Factor>
+    loop por cada factor
+      GF -> GF : new FactorDTO(id, nombre)
+    end
+    GF --> PT : list<FactorDTO>
     deactivate GF
     PT --> Consultor : carga los Factores de la Competencia
   end
@@ -53,59 +64,79 @@ loop el actor desea cargar otra pregunta
     ODAO --> GR : opcion
     GR -> OR : obtener_detalles()
     OR --> GR : list<Detalle_opcion>
-    GR --> PT : list<Detalle_opcion>
+    loop por cada opción
+      GR -> GR : new DetalleOpcionDTO(id, orden, descripcion)
+    end
+    GR --> PT : list<DetalleOpcionDTO>
     deactivate GR
     PT --> Consultor : grilla Orden / Descripción (solo lectura)\n/ Ponderación (editable), ordenada por orden
   end
 
   note over Consultor, PT : "Generar con IA" (CU033) se muestra deshabilitado:\nno forma parte de esta implementación
 
-  break el actor presiona "Cancelar"
-    PT --> Consultor : redirige al CU020 - Gestionar Preguntas
+  loop hasta que los datos sean válidos (2.A, 2.B y 2.C vuelven al paso 2)
+    alt el actor ingresa los datos y presiona "Aceptar" (paso 2)
+      Consultor -> PT : ingresa los datos y las ponderaciones y presiona "Aceptar"
+      PT -> GP : dar_de_alta(datos: DatosPreguntaDTO)
+      activate GP
+      GP -> GP : normalizar(datos)
+      note right of GP : datos literales SIEMPRE en mayúsculas
+      GP -> GP : validar_campos_obligatorios(datos)
+      GP -> GP : validar_longitudes(datos)
+      GP -> GP : validar_ponderaciones(datos)
+      note right of GP : las ponderaciones deben sumar 10\ny ser siempre 0 o positivas
+      alt 2.A faltan datos / 2.B longitud excedida / ponderaciones inválidas
+        GP --> PT : ValidacionException(TODOS los errores)
+        PT --> Consultor : mensaje con TODAS las omisiones, sin tapar campos ni botones,\ny marca junto a cada campo con error
+      else los datos están completos y las ponderaciones son válidas
+        GP -> FDAO : obtener_por_id(id_factor)
+        FDAO --> GP : factor
+        GP -> ODAO : obtener_por_id(id_opcion)
+        ODAO --> GP : opcion
+        GP -> PDAO : existe_pregunta(nombre, null, competencia, factor, 0)
+        PDAO --> GP : boolean
+        GP -> PDAO : existe_pregunta(null, pregunta, competencia, factor, 0)
+        PDAO --> GP : boolean
+        alt 2.C la pregunta ya existe para esa competencia y factor
+          GP --> PT : ValidacionException(validación no superada, campo "nombre")
+          PT --> Consultor : aviso que aclara la validación no superada,\ncon el foco en el campo Nombre
+        else la pregunta no existe (paso 3)
+          create PREG
+          GP -> PREG : new Pregunta()
+          GP -> GP : completar(pregunta, datos, opcion)
+          activate GP
+          note right of GP : nombre, pregunta, descripción,\nfactor y opción de respuesta
+          loop por cada opción (Detalle_opcion) de la opción de respuesta
+            create POND
+            GP -> POND : new Ponderacion_opcion(detalle, ponderacion)
+          end
+          GP -> PREG : setPonderaciones(ponderaciones)
+          deactivate GP
+          GP -> PDAO : guardar(pregunta)
+          activate PDAO
+          note right of PDAO : INSERT en Pregunta
+          loop por cada Ponderacion_opcion de la pregunta
+            note right of PDAO : INSERT en Ponderacion_opcion\n(id_pregunta, id_detalle, ponderacion)
+          end
+          PDAO --> GP
+          deactivate PDAO
+          GP --> PT
+          PT --> Consultor : "La Pregunta <nombre> se ha creado correctamente.\n¿Desea cargar otra?" [SI] [NO] (pasos 3 y 4)
+        end
+      end
+      deactivate GP
+    else 1.A.2 el actor presiona "Cancelar"
+      Consultor -> PT : presiona "Cancelar"
+      PT --> Consultor : redirige al CU020 - Gestionar Preguntas (el CU termina)
+    end
   end
 
-  loop hasta que los datos sean válidos
-    Consultor -> PT : ingresa los datos y presiona "Aceptar"
-    PT -> GP : dar_de_alta(datos: DatosPreguntaDTO)
-    activate GP
-    GP -> GP : validar_campos_obligatorios(datos)
-    GP -> GP : validar_longitudes(datos)
-    GP -> GP : validar_ponderaciones(datos)
-    opt 2.A datos faltantes / 2.B longitud excedida / ponderaciones que no suman 10
-      GP --> PT : ValidacionException(TODOS los errores)
-      PT --> Consultor : panel con todas las omisiones, sin tapar campos ni botones
-    end
-    GP -> FDAO : obtener_por_id(id_factor)
-    FDAO --> GP : factor
-    GP -> ODAO : obtener_por_id(id_opcion)
-    ODAO --> GP : opcion
-    GP -> PDAO : existe_pregunta(nombre, null, competencia, factor, 0)
-    PDAO --> GP : boolean
-    GP -> PDAO : existe_pregunta(null, pregunta, competencia, factor, 0)
-    PDAO --> GP : boolean
-    opt 2.C la pregunta ya existe para esa competencia y factor
-      GP --> PT : ValidacionException(validación no superada, campo "nombre")
-      PT --> Consultor : aviso, con foco en el campo Nombre
-    end
-  end
-
-  create PREG
-  GP -> PREG : new Pregunta()
-  note right of PREG : nombre, pregunta y descripción en mayúsculas,\nfactor, opción de respuesta y Ponderacion_opcion\npor cada opción
-  GP -> PDAO : guardar(pregunta)
-  activate PDAO
-  PDAO --> GP
-  deactivate PDAO
-  GP --> PT
-  deactivate GP
-  PT --> Consultor : "La Pregunta <nombre> se ha creado correctamente.\n¿Desea cargar otra?" [SI] [NO]
-
-  alt el actor elige "SI"
+  alt 5.A el actor elige "SI"
     Consultor -> PT : SI
     note right of PT : el CU vuelve al paso 1
-  else el actor elige "NO"
+  else el actor elige "NO" (paso 5)
     Consultor -> PT : NO
-    PT --> Consultor : vuelve al CU020 y actualiza la grilla
+    PT --> Consultor : vuelve al CU020 y actualiza la grilla (paso 6)
   end
 end
 deactivate PT

@@ -1,10 +1,10 @@
 package com.grupo12.presentacion;
 
-import com.grupo12.dominio.Competencia;
-import com.grupo12.dominio.Detalle_opcion;
-import com.grupo12.dominio.Factor;
-import com.grupo12.dominio.Opcion_respuesta;
+import com.grupo12.dto.CompetenciaDTO;
 import com.grupo12.dto.DatosPreguntaDTO;
+import com.grupo12.dto.DetalleOpcionDTO;
+import com.grupo12.dto.FactorDTO;
+import com.grupo12.dto.OpcionRespuestaDTO;
 import com.grupo12.gestores.Gestor_de_competencia;
 import com.grupo12.gestores.Gestor_de_factor;
 import com.grupo12.gestores.Gestor_de_pregunta;
@@ -118,7 +118,7 @@ public class PantallaAltaPregunta extends Pantalla {
                     .append("<select id=\"competencia\" name=\"competencia\" data-autoenviar=\"competencia\"")
                     .append(foco == null && datos.getId_competencia() == 0 && emergente == null ? " autofocus" : "")
                     .append("><option value=\"0\">(Seleccione una competencia)</option>");
-            for (Competencia competencia : new Gestor_de_competencia().buscar(null)) {
+            for (CompetenciaDTO competencia : new Gestor_de_competencia().buscar(null)) {
                 sb.append(opcion(competencia.getId_competencia(), competencia.getNombre() + " ("
                         + competencia.getTipo() + ")", datos.getId_competencia()));
             }
@@ -129,7 +129,7 @@ public class PantallaAltaPregunta extends Pantalla {
                 sb.append(" disabled><option value=\"0\">(Primero seleccione la competencia)</option>");
             } else {
                 sb.append("><option value=\"0\">(Seleccione un factor)</option>");
-                for (Factor factor : new Gestor_de_factor().obtener_por_competencia(datos.getId_competencia())) {
+                for (FactorDTO factor : new Gestor_de_factor().obtener_por_competencia(datos.getId_competencia())) {
                     sb.append(opcion(factor.getId_factor(), factor.getNombre(), datos.getId_factor()));
                 }
             }
@@ -161,16 +161,16 @@ public class PantallaAltaPregunta extends Pantalla {
                 .append("<label for=\"opcion\">Opción de Respuesta ").append(OBLIGATORIO).append("</label>")
                 .append("<select id=\"opcion\" name=\"opcion\" data-autoenviar=\"opcion\">")
                 .append("<option value=\"0\">(Seleccione una opción de respuesta)</option>");
-        for (Opcion_respuesta opcion : gestorRespuesta.buscar(null)) {
+        for (OpcionRespuestaDTO opcion : gestorRespuesta.buscar(null)) {
             sb.append(opcion(opcion.getId_opcion(), opcion.getNombre(), datos.getId_opcion()));
         }
         sb.append("</select></div>");
         if (datos.getId_opcion() > 0) {
-            List<Detalle_opcion> detalles = gestorRespuesta.obtener_detalles(datos.getId_opcion());
+            List<DetalleOpcionDTO> detalles = gestorRespuesta.obtener_detalles(datos.getId_opcion());
             sb.append(abrirCampo("ponderaciones", marcas)).append("<table class=\"grilla\"><thead><tr>")
                     .append("<th class=\"centro\">Orden</th><th>Descripción</th><th class=\"numero\">Ponderación</th>")
                     .append("</tr></thead><tbody>");
-            for (Detalle_opcion detalle : detalles) {
+            for (DetalleOpcionDTO detalle : detalles) {
                 Double ponderacion = datos.getPonderaciones().get(detalle.getId_detalle());
                 sb.append("<tr><td class=\"centro\">").append(detalle.getOrden()).append("</td><td>")
                         .append(Html.e(detalle.getDescripcion())).append("</td><td class=\"numero\">")

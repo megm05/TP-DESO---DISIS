@@ -1,8 +1,10 @@
 package com.grupo12.gestores;
 
 import com.grupo12.dominio.Factor;
+import com.grupo12.dto.FactorDTO;
 import com.grupo12.persistencia.FabricaDAO;
 import com.grupo12.persistencia.FactorDAO;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Gestor de factores. */
@@ -18,8 +20,12 @@ public class Gestor_de_factor {
         this.factorDAO = factorDAO;
     }
 
-    /** Factores correspondientes a una competencia (CU021: al seleccionarla se cargan sus factores). */
-    public List<Factor> obtener_por_competencia(int id_competencia) {
-        return factorDAO.obtener_por_competencia(id_competencia);
+    /** Factores de la competencia seleccionada (CU021: al elegir la competencia se cargan sus factores). */
+    public List<FactorDTO> obtener_por_competencia(int id_competencia) {
+        List<FactorDTO> resultado = new ArrayList<>();
+        for (Factor factor : factorDAO.obtener_por_competencia(id_competencia)) {
+            resultado.add(new FactorDTO(factor.getId_factor(), factor.getNombre()));
+        }
+        return resultado;
     }
 }

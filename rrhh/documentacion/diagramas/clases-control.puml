@@ -2,6 +2,7 @@
 title Diagrama de Clases - Controladores y DTO
 skinparam classAttributeIconSize 0
 skinparam shadowing false
+skinparam linetype ortho
 
 skinparam nodesep 45
 skinparam ranksep 55
@@ -39,14 +40,14 @@ class Gestor_de_pregunta {
   +validar_ponderaciones(datos: DatosPreguntaDTO): List<String>
 }
 class Gestor_de_competencia {
-  +buscar(nombre_competencia: String): List<Competencia>
+  +buscar(nombre_competencia: String): List<CompetenciaDTO>
 }
 class Gestor_de_factor {
-  +obtener_por_competencia(id_competencia: int): List<Factor>
+  +obtener_por_competencia(id_competencia: int): List<FactorDTO>
 }
 class Gestor_de_respuesta {
-  +buscar(nombre: String): List<Opcion_respuesta>
-  +obtener_detalles(id_opcion: int): List<Detalle_opcion>
+  +buscar(nombre: String): List<OpcionRespuestaDTO>
+  +obtener_detalles(id_opcion: int): List<DetalleOpcionDTO>
 }
 class Gestor_de_puesto {
   +buscar(codigo: Integer, nombre_puesto: String, nombre_empresa: String): List<PuestoSeleccionDTO>
@@ -160,6 +161,24 @@ class ArchivoDTO {
   -nombre_archivo: String
   -contenido: byte[]
 }
+class CompetenciaDTO {
+  -id_competencia: int
+  -nombre: String
+  -tipo: String
+}
+class FactorDTO {
+  -id_factor: int
+  -nombre: String
+}
+class OpcionRespuestaDTO {
+  -id_opcion: int
+  -nombre: String
+}
+class DetalleOpcionDTO {
+  -id_detalle: int
+  -orden: int
+  -descripcion: String
+}
 }
 package "persistencia" {
 interface ParametroDAO
@@ -218,6 +237,10 @@ Gestor_de_evaluacion ..> ArchivoDTO
 Gestor_de_cuestionario ..> PreguntaBloqueDTO
 Gestor_de_orden_merito ..> PuestoBusquedaDTO
 Gestor_de_orden_merito ..> OrdenMeritoCandidatoDTO
+Gestor_de_competencia ..> CompetenciaDTO
+Gestor_de_factor ..> FactorDTO
+Gestor_de_respuesta ..> OpcionRespuestaDTO
+Gestor_de_respuesta ..> DetalleOpcionDTO
 PreguntaBloqueDTO "1" *-- "2..*" OpcionBloqueDTO
 
 note as N1
