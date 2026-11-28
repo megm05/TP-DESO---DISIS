@@ -1,4 +1,4 @@
-# Gestión de Evaluaciones de Perfiles — TP 2026 Diseño de Sistemas (Grupo 12)
+# Gestión de Evaluaciones de Perfiles — TP 2026 Diseño de Sistemas (Grupo 24)
 
 Sistema para la consultora **Capit@l Humano**: gestión de preguntas, evaluación de
 candidatos, cuestionarios por bloques y orden de mérito.
@@ -72,7 +72,7 @@ datos de los usuarios que ya existen (por ejemplo, el apellido) y crea los que f
 ## Estructura
 
 ```
-src/main/java/com/grupo12/
+src/main/java/com/grupo24/
   presentacion/   Pantallas (servidor web embebido del JDK)
   gestores/       Controladores de los casos de uso
   dominio/        Entidades y su comportamiento
@@ -91,14 +91,14 @@ Las pruebas de integración recorren los flujos principales y alternativos de to
 casos de uso. **Borran y vuelven a crear las tablas** de la base indicada:
 
 ```
-mvn test-compile exec:java -Dexec.mainClass=com.grupo12.PruebasIntegracion -Dexec.classpathScope=test -Dexec.args=--demo
+mvn test-compile exec:java -Dexec.mainClass=com.grupo24.PruebasIntegracion -Dexec.classpathScope=test -Dexec.args=--demo
 ```
 
 Resultado: 94 de 94 verificaciones correctas, en PostgreSQL 16 y en el modo demo.
 
 ## Documentación
 
-`documentacion/Documentacion del sistema - TP 2026 Grupo 12` (Word y PDF): arquitectura,
+`documentacion/Documentacion del sistema - TP 2026 Grupo 24` (Word y PDF): arquitectura,
 diagramas de clases, DER, secuencias y despliegue, decisiones de diseño, pruebas,
 manual de instalación y manual de usuario.
 

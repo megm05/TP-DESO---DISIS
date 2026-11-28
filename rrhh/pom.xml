@@ -4,18 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.grupo12</groupId>
+    <groupId>com.grupo24</groupId>
     <artifactId>rrhh</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>Gestión de Evaluaciones de Perfiles</name>
-    <description>TP 2026 de Diseño de Sistemas (UTN FRSF) - Grupo 12</description>
+    <description>TP 2026 de Diseño de Sistemas (UTN FRSF) - Grupo 24</description>
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <clase.principal>com.grupo12.Aplicacion</clase.principal>
+        <clase.principal>com.grupo24.Aplicacion</clase.principal>
     </properties>
 
     <dependencies>

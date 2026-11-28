@@ -231,7 +231,7 @@ Registro_pregunta "0..*" --> "1" Consultor
 Registro_pregunta ..> Pregunta
 
 note as N1
-  Clases del dominio implementadas (paquete com.grupo12.dominio).
+  Clases del dominio implementadas (paquete com.grupo24.dominio).
   Atributos y métodos generados desde el código; se omiten
   getters y setters. Las clases del diseño que corresponden a
   casos de uso fuera de la implementación (RepComp,
